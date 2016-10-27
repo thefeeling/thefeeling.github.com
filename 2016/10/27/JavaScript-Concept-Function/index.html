@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="DevBlog, D.Choi">
+    <title>자바스크립트 this 바인딩(함수/객체) - DevBlog, D.Choi</title>
+    <meta name="author" content="D.Choi">
+    <meta name="description" content="DevBlog, D.Choi">
+    <link rel="icon" href="/assets/images/null">
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="atom.xml">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="https://thefeeling.github.com">DevBlog, D.Choi</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="/assets/images/developer.png"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="/assets/images/developer.png"/>
+            
+        </a>
+        <span class="sidebar-profile-name">D.Choi</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-categories">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-tags">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-archives">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs" href="/#search">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/#about">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/atom.xml">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">자바스크립트 this 바인딩(함수/객체)</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Oct 27 2016 17:27:27 GMT+0900">
+        Oct 27, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">JavaScript</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <h1 id="JavaScript-this-바인딩-함수-객체"><a href="#JavaScript-this-바인딩-함수-객체" class="headerlink" title="JavaScript_this 바인딩(함수/객체)"></a>JavaScript_this 바인딩(함수/객체)</h1><p>자바스크립트에서 this는 함수/객체 실행에 따라서 바라보는(참조)하는 객체가 달라지게 된다.</p>
+<h2 id="객체"><a href="#객체" class="headerlink" title="객체"></a>객체</h2><p>객체 프로퍼티가 함수인 경우, 함수 내부에서 this는 객체를 가리키게 된다.</p>
+<p>다시 말해서, this는 그 매서드를 호출한 객체를 바라보게 된다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObject = &#123;</div><div class="line">  <span class="attr">value</span> : <span class="number">100</span>,</div><div class="line">  <span class="attr">getValue</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.value) <span class="comment">// 100;</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>프로퍼티가 함수인 경우, 간단하게 this가 가리키는 것이 객체가 된다고 생각할 수 있다. 하지만 함수 내부에서 다시 내부 함수를 사용할 경우, 그 내부함수에서 가리키게 되는 this는 일반 함수에서의 this가 가리키는 것과 동일하게 전역객체를 가리키게 된다. 그렇기 때문에 코드상에서 객체를 가리킬 수 있도록 임의로 객체를 참조하는 변수를 만들어서 사용하기도 한다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObject = &#123;</div><div class="line">  <span class="attr">value</span> : <span class="number">100</span>,</div><div class="line">  <span class="attr">getValue</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> that = <span class="keyword">this</span>; <span class="comment">// 일반적으로 that으로 참조 변수명을 정하는게 관례</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.value) <span class="comment">// 100;</span></div><div class="line">    <span class="keyword">var</span> func1 = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(that.value) <span class="comment">// 100;</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="함수"><a href="#함수" class="headerlink" title="함수"></a>함수</h2><p>기본적으로, 함수를 실행하게되면 this는 전역객체인 window(브라우저) / global(Node)를 가리키게 된다. 결과적으로 함수를 그냥 실행하느냐와 생성자 함수로 실행하느냐의 차이는 엄청나게 다르다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">this</span>.value = <span class="number">100</span>; <span class="comment">// window.value = 100;</span></div><div class="line">  <span class="keyword">this</span>.name = <span class="string">"kschoi"</span>; <span class="comment">// window.name = "kschoi"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="생성자-함수"><a href="#생성자-함수" class="headerlink" title="생성자 함수"></a>생성자 함수</h2><p>생성자 함수의 경우, 아래의 순서대로 인스턴스를 생성하게 된다.</p>
+<ul>
+<li>빈 객체를 생성하여, 빈 객체에 this를 바인딩하게 된다.</li>
+<li>빈 객체에 this를 바인딩하기 앞서, 객체의 <strong>proto</strong> 프로퍼티를 생성하여 함수 객체의 prototype 영역을 참조하게 한다</li>
+<li>이후 함수 내부 코드에서 this를 사용하여 객체에 속성 혹은 매소드를 생성하게 된다.<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = <span class="string">"kschoi"</span></div><div class="line">    <span class="keyword">this</span>.age = <span class="number">20</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> obj = &#123;&#125;;</div><div class="line">obj.__proto__ = Test.prototype;</div><div class="line">Test.call(obj);</div><div class="line"><span class="built_in">console</span>.log(obj);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>하나 눈여겨 볼 부분은 함수의 리턴값에 관련된 부분이다. 만약 함수에 리턴값이 없으면 ‘undefined’가 리턴되지만, 생성자 함수의 경우 생성된 객체를 리턴하게 된다. 하지만, 만약 생성자 함수에서 임의적으로 리턴하는 객체가 존재하게 되면 this를 사용하여 속성값 혹은 매소드를 생성한 객체를 리턴하는 것이 아닌 임의로 지정한 리턴 객체를 반환하게 된다.</p>
+
+        
+            
+        
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">JavaScript</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-pm2/"  data-tooltip="[Node.Js] - PM2">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-prototype/" data-tooltip="자바스크립트 프로토타입">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 D.Choi. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-pm2/"  data-tooltip="[Node.Js] - PM2">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-prototype/" data-tooltip="자바스크립트 프로토타입">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+                </div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/developer.png"/>
+        
+            <h4 id="about-card-name">D.Choi</h4>
+        
+            <h5 id="about-card-bio"><p>Do it easy, Do Continue!</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Developer</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/covernew.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'http-thefeeling-github-io';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

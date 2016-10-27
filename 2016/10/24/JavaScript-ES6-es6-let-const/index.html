@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="DevBlog, D.Choi">
+    <title>[ES6] - let/const - DevBlog, D.Choi</title>
+    <meta name="author" content="D.Choi">
+    <meta name="description" content="DevBlog, D.Choi">
+    <link rel="icon" href="/assets/images/null">
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="atom.xml">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="https://thefeeling.github.com">DevBlog, D.Choi</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="/assets/images/developer.png"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="/assets/images/developer.png"/>
+            
+        </a>
+        <span class="sidebar-profile-name">D.Choi</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-categories">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-tags">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-archives">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs" href="/#search">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/#about">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/atom.xml">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">[ES6] - let/const</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Mon Oct 24 2016 20:03:44 GMT+0900">
+        Oct 24, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">JavaScript</a>, <a class="category-link" href="/categories/javascript/es6/">ES6</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <!-- toc orderedList:0 -->
+<ul>
+<li><a href="#let-키워드-사용-블록-스코프-변수-생성">let 키워드 사용 : 블록 스코프 변수 생성</a></li>
+<li><a href="#const-상수-생성">const 상수 생성</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<h3 id="let-키워드-사용-블록-스코프-변수-생성"><a href="#let-키워드-사용-블록-스코프-변수-생성" class="headerlink" title="let 키워드 사용 : 블록 스코프 변수 생성"></a>let 키워드 사용 : 블록 스코프 변수 생성</h3><p>자바스크립트 기본적으로 함수 단위의 스코프를 제공하고 있는데, 다른 언어들과는 다른 부분이기 때문에 이러한 특징을 잘 알고 있지 않으면 코드 작성에 어려움을 겪거나 메모리 누수를 낳는 코드를 만들 가능성이 높다.<br>ES6에서는 이러한 다른 언어들의 특성을 받아들여 블록 단위의 변수 선언을 할 수 있는 let 키워드가 추가가 되었다.기존 컴파일 언어나 다른 언어를 쓰던 개발자들도 이제 쉽게 블록 단위의 변수 선언을 통하여 햇갈리지 않는 개발이 가능하다.</p>
+<p><em>var 키워드가 표준에서 빠지는 건 아니기 때문에, 새로 추가된 let 키워드의 스코프 특성에 대해 잘 알고 있어야 한다.</em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printNumberZ</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(a);</div><div class="line">	<span class="keyword">var</span> a = <span class="number">2</span>;</div><div class="line">&#125;</div><div class="line">printNumber();</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">1</div><div class="line">2</div></pre></td></tr></table></figure>
+<p>위와 같은 코드가 있다고 할때, 출력 결과를 생각해보면 자바스크립트 변수 특징에 대해 원래 잘 알고 있는 개발자라면 쉽게 대답할 수 있는 결과가 출력이 될 것이다.<br>기본 var 변수로 선언하면 함수 단위의 스코프로 생성되기 때문에, 자신의 스코프에 있는 함수를 먼저 참조하게 된다. 그래서 출력 결과가 같은 스코프에 있는 변수를 바라보게 되는 것이다.</p>
+<p>let 키워드를 사용한 샘플 코드를 작성해봤는데 간단하게 결과를 예측해봐도 재밌을꺼 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printLetVariable</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line">	<span class="built_in">console</span>.log(a);</div><div class="line">&#125;</div><div class="line">printLetVariable();</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">10</div><div class="line">20</div><div class="line">10</div></pre></td></tr></table></figure>
+<p>출력 결과를 살펴보니, let도 역시 같은 스코프에 있는 변수를 참고 하는 것을 기본으로 하고 있다.<br>그렇다면 코드를 살짝 틀어서 중복으로 선언했을 경우를 생각해보자. 먼저 var 변수 선언의 경우를 보고 그 다음에 let 변수 선언에 대해 테스트 코드를 작성해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">var</span> a = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">20</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">SyntaxError: Identifier &apos;a&apos; has already been declared</div></pre></td></tr></table></figure>
+<p>Node.js 6.x 버젼에서 테스트를 해봤는데 위와 같은 결과가 리턴되었다. 변수 특성에 대한 결과를 정리해보자.</p>
+<ul>
+<li>let 변수는 같은 스코프에 있을 경우 중복으로 선언하면 TypeError 예외를 발생시킨다.</li>
+<li>var 변수의 경우 중복 선언 허용</li>
+<li>만약, 스코프가 다르다면 같은 변수명을 선언해도 문제가 없으며 참조 시 같은 스코프에 있는 변수를 참조하게 된다.</li>
+<li>var/let 을 조합한다고 해도, 같은 스코프에 저장되는 변수기 때문에 중복 선언이 안된다.</li>
+</ul>
+<blockquote>
+<p>흠 하위 호환성을 생각하면 var 변수를 써야 할꺼 같은데, 만약 개발하는 환경이 ES6 코드가 정상적으로 굴러갈 수 있는 환경이라면 적극적으로 let 키워드를 통하여 변수를 선언하는 것이 유리할꺼 같다.</p>
+</blockquote>
+<h3 id="const-상수-생성"><a href="#const-상수-생성" class="headerlink" title="const 상수 생성"></a>const 상수 생성</h3><p>C,C++,Java 같은 언어에는 상수를 저장할 수 있는 문법적인 요소를 지원하고 있는데 자바스크립트를 그런 부분에 대한 지원이 전혀 없었다. 그래서 대부분 코드 컨벤션을 대문자로 잡거나 하는 방법으로 나름대로 상수를 식별하는 경우를 많이 봤었다.</p>
+<p>var 변수의 경우 스코프의 변수 변경이 가능하다는 점 때문에 기존 코드에서는 상수 운영 시 변경에 대한 위험이 있었다고 할 수 있겠다.<br>ES6에서는 이런 상수에 대한 문법적인 지원을 포함하였는데, 그것이 바로 const 키워드이다.</p>
+<p>쉽게 생각하여 읽기 전용 변수라고 보면 좋을꺼 같은데, 앞서 let 변수 선언의 특징을 설명했었는데 const는 이런 let 변수의 성격에 변경이 불가능한 ‘읽기전용’이라는 성격이 들어간다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ABS = <span class="number">10</span>;</div><div class="line">ABS = <span class="number">20</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line"><span class="built_in">TypeError</span>: Assignment to constant variable.</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ABS = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(ABS);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printAbs</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="keyword">const</span> ABS = <span class="number">20</span>;</div><div class="line">	<span class="built_in">console</span>.log(ABS);</div><div class="line">&#125;</div><div class="line">printAbs();</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line"><span class="number">10</span></div><div class="line"><span class="number">20</span></div></pre></td></tr></table></figure>
+<p>읽기 전용 변수의 성격이라서 값을 다시 할당하는 것은 불가능하다.<br>그리고 let 변수의 성격처럼 블록 단위의 스코프를 지원하기 때문에 같은 변수명을 사용하더라도 스코프가 다르면 사용이 가능하다.</p>
+<p>앞에서 let/const 의 간단한 성격을 설명했는데, 값을 직접 할당하는 방식으로 사용했기 때문에 실제로 코드를 작성할때 참조 타입의 데이터(객체,함수,배열)이 들어갔을 경우에 어떻게 되는지 궁금할 수 있다.<br>기본적으로 참조 타입은 데이터의 주소 값을 저장하는 점을 잘 기억하면 좋을꺼 같다.</p>
+<blockquote>
+<p>다른 언어들도 거의 비슷하기 때문에, 경험 많은 분들이면 쉽게 이해할 수 있을꺼 같아요.</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> arr = [<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>];</div><div class="line">arr[<span class="number">0</span>] = <span class="number">100</span>;</div><div class="line"><span class="built_in">console</span>.log(arr);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">[ 100, 20, 30, 40 ]</div></pre></td></tr></table></figure>
+<p>const는 읽기 전용이라고 했는데, 왜 변경이 되는지 잘 생각해보면 쉽게 답이 나온다. 실제로 arr의 참조 값을 바꾸는 것이 아니기 때문에 해당 참조 타입의 데이터의 인덱스/프로퍼티를 수정하더라도 기존 참조 타입의 데이터를 사용하듯이 추가/변경이 가능 한 것이다.</p>
+<blockquote>
+<p>쫌 어려운 말로 const 변수가 객체 타입이더라도, 객체 자체는 가변(mutable) 상태인 것이다. 다른 언어들에서는 Mutable / Immutable 상태에 따른 변수를 선언하는 방식도 사용하고 있고 변경이 가능하냐 불가능하냐고 중요한 부분이기 때문에 해당 키워드를 검색해보는 것도 좋은 공부가 될꺼 같다.</p>
+</blockquote>
+<p>예제는 물론 배열로 선언했지만 객체 역시도 동일하게 적용된다. 사용해야 할 목적과 이유는 분명한거 같다. 객체 자체의 변경이 없어야 할 경우 const 변수와 참조 타입을 적절하게 조합하여 사용하면 기존 var 변수로 선언했던 방식보다 좀 더 수월하게 개발이 가능한 것이다.</p>
+<h3 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h3><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=10087062" target="_blank" rel="external">ECMAScript 6 길들이기</a></li>
+</ul>
+
+        
+            
+        
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">JavaScript</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/24/JavaScript-ES6-es6-default-parameter-spread-operator-rest-parameter/"  data-tooltip="[ES6] - Default Parameter / Spread Operator / Rest Parameter">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 D.Choi. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/24/JavaScript-ES6-es6-default-parameter-spread-operator-rest-parameter/"  data-tooltip="[ES6] - Default Parameter / Spread Operator / Rest Parameter">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+                </div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/developer.png"/>
+        
+            <h4 id="about-card-name">D.Choi</h4>
+        
+            <h5 id="about-card-bio"><p>Do it easy, Do Continue!</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Developer</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/covernew.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'http-thefeeling-github-io';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

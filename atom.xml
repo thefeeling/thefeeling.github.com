@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DevBlog, D.Choi</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://thefeeling.github.com/"/>
+  <updated>2016-10-27T09:05:09.000Z</updated>
+  <id>https://thefeeling.github.com/</id>
+  
+  <author>
+    <name>D.Choi</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>[Node.Js] - PM2</title>
+    <link href="https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-pm2/"/>
+    <id>https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-pm2/</id>
+    <published>2016-10-27T08:54:09.000Z</published>
+    <updated>2016-10-27T09:05:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 depthFrom:1 depthTo:6 -->
+<ul>
+<li><a href="#pm2">PM2</a><ul>
+<li><a href="#설치">설치</a></li>
+<li><a href="#기본-사용">기본 사용</a></li>
+<li><a href="#어플리케이션-설정-파일-사용">어플리케이션 설정 파일 사용</a></li>
+<li><a href="#cheatsheat">CheatSheat</a></li>
+</ul>
+</li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<h1 id="PM2"><a href="#PM2" class="headerlink" title="PM2"></a>PM2</h1><ul>
+<li>Node.js 애플리케이션용 프로덕션 프로세스 관리자</li>
+<li>로드 밸런서 기본 제공</li>
+<li>앱을 항상 작동 상태로 유지</li>
+<li>시스템 가동 중단 없이 앱을 다시 로드<ul>
+<li><strong>MAX MEMORY RESTART</strong> 기능을 제공하는데 <strong>커맨드라인/JSON/코드(JS)</strong> 등으로 설정 가능하다.</li>
+</ul>
+</li>
+<li>일반적인 시스템 관리 태스크를 쉽게 처리 가능</li>
+<li>애플리케이션 로깅, 모니터링 및 클러스터링을 관리<ul>
+<li>클러스터 모드의 경우, 여러개의 프로세스를 생성해놓고, 이를 PM2에서 자동으로 로드밸런싱으로 지원해주기 때문에, 앞단 웹 서버(Nginx, Apache Server 등)에서 프록시 설정만 간단히 해줘도 된다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ [sudo] npm install pm2 -g</div></pre></td></tr></table></figure>
+<h2 id="기본-사용"><a href="#기본-사용" class="headerlink" title="기본 사용"></a>기본 사용</h2><p>앱을 시작할때 즉시 백그라운드로 보내진다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pm2 start app.js</div></pre></td></tr></table></figure></p>
+<p>메뉴얼을 읽으면서 가장 괜찮다고 생각한 부분이 바로 다른 스크립트 언어도 같이 지원하는 부분이었다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ pm2 start echo.pl --interpreter=perl</div><div class="line"></div><div class="line">$ pm2 start echo.coffee</div><div class="line">$ pm2 start echo.php</div><div class="line">$ pm2 start echo.py</div><div class="line">$ pm2 start echo.sh</div><div class="line">$ pm2 start echo.rb</div></pre></td></tr></table></figure></p>
+<h2 id="어플리케이션-설정-파일-사용"><a href="#어플리케이션-설정-파일-사용" class="headerlink" title="어플리케이션 설정 파일 사용"></a>어플리케이션 설정 파일 사용</h2><p>JSON, YML 포맷으로 만들어진 파일을 일종의 시작 프로파일로 사용할 수 있다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pm2 start start.yml(start.json)</div></pre></td></tr></table></figure></p>
+<p><strong>start.yml</strong><br><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="attr">apps:</span></div><div class="line"><span class="bullet">  -</span> script   : app.js</div><div class="line"><span class="attr">    instances:</span> <span class="number">4</span></div><div class="line"><span class="attr">    exec_mode:</span> cluster</div><div class="line"><span class="bullet">  -</span> script : worker.js</div><div class="line">    watch  : <span class="literal">true</span></div><div class="line">    env    :</div><div class="line"><span class="attr">      NODE_ENV:</span> development</div><div class="line"><span class="attr">    env_production:</span></div><div class="line"><span class="attr">      NODE_ENV:</span> production</div></pre></td></tr></table></figure></p>
+<p><strong>start.json</strong><br><figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">      <span class="attr">"apps"</span> : [</div><div class="line">            &#123;</div><div class="line">            <span class="attr">"name"</span>       : <span class="string">"bash-worker"</span>,</div><div class="line">            <span class="attr">"script"</span>     : <span class="string">"./a-bash-script"</span>,</div><div class="line">            <span class="attr">"exec_interpreter"</span>: <span class="string">"bash"</span>,</div><div class="line">            <span class="attr">"exec_mode"</span>  : <span class="string">"fork_mode"</span></div><div class="line">            &#125;,</div><div class="line">            &#123;</div><div class="line">            <span class="attr">"name"</span>       : <span class="string">"ruby-worker"</span>,</div><div class="line">            <span class="attr">"script"</span>     : <span class="string">"./some-ruby-script"</span>,</div><div class="line">            <span class="attr">"exec_interpreter"</span>: <span class="string">"ruby"</span>,</div><div class="line">            <span class="attr">"exec_mode"</span>  : <span class="string">"fork_mode"</span></div><div class="line">            &#125;</div><div class="line">      ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="CheatSheat"><a href="#CheatSheat" class="headerlink" title="CheatSheat"></a>CheatSheat</h2><ul>
+<li>출처 : <a href="http://pm2.keymetrics.io/docs/usage/quick-start/#cheat-sheet" target="_blank" rel="external">PM2 공식 홈페이지</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Fork mode</span></div><div class="line">$ pm2 start app.js --name my-api <span class="comment"># 프로세스 네임 지정</span></div><div class="line"></div><div class="line"><span class="comment"># Cluster mode</span></div><div class="line">$ pm2 start app.js -i 0     <span class="comment"># 가용한 CPU 갯수만큼 클러스터 확장</span></div><div class="line">$ pm2 start app.js -i max   <span class="comment"># 위 설정과 동일하지만 곧 Deprecated 예정?</span></div><div class="line"></div><div class="line"><span class="comment"># Listing</span></div><div class="line">$ pm2 list               <span class="comment"># 모든 프로세스 리스트/상태 확인</span></div><div class="line">$ pm2 jlist              <span class="comment"># 모든 프로세스 리스트/상태 확인(JSON)</span></div><div class="line">$ pm2 prettylist         <span class="comment"># 모든 프로세스 리스트/상태 확인(Beatiful JSON)</span></div><div class="line"></div><div class="line">$ pm2 describe 0         <span class="comment"># 특정 프로세스 정보 확인</span></div><div class="line">$ pm2 monit              <span class="comment"># 모든 프로세스 모니터링</span></div><div class="line"></div><div class="line"><span class="comment"># Logs</span></div><div class="line"></div><div class="line">$ pm2 logs [--raw]       <span class="comment"># Display all processes logs in streaming</span></div><div class="line">$ pm2 flush              <span class="comment"># Empty all log file</span></div><div class="line">$ pm2 reloadLogs         <span class="comment"># Reload all logs</span></div><div class="line"></div><div class="line"><span class="comment"># Actions</span></div><div class="line"></div><div class="line">$ pm2 stop all           <span class="comment"># Stop all processes</span></div><div class="line">$ pm2 restart all        <span class="comment"># Restart all processes</span></div><div class="line"></div><div class="line">$ pm2 reload all         <span class="comment"># Will 0s downtime reload (for NETWORKED apps)</span></div><div class="line">$ pm2 gracefulReload all <span class="comment"># Send exit message then reload (for networked apps)</span></div><div class="line"></div><div class="line">$ pm2 stop 0             <span class="comment"># Stop specific process id</span></div><div class="line">$ pm2 restart 0          <span class="comment"># Restart specific process id</span></div><div class="line"></div><div class="line">$ pm2 delete 0           <span class="comment"># Will remove process from pm2 list</span></div><div class="line">$ pm2 delete all         <span class="comment"># Will remove all processes from pm2 list</span></div><div class="line"></div><div class="line"><span class="comment"># Misc</span></div><div class="line"></div><div class="line">$ pm2 reset &lt;process&gt;    <span class="comment"># Reset meta data (restarted time...)</span></div><div class="line">$ pm2 updatePM2          <span class="comment"># Update in memory pm2</span></div><div class="line">$ pm2 ping               <span class="comment"># Ensure pm2 daemon has been launched</span></div><div class="line">$ pm2 sendSignal SIGUSR2 my-app <span class="comment"># Send system signal to script</span></div><div class="line">$ pm2 start app.js --no-daemon</div><div class="line">$ pm2 start app.js --no-vizion</div><div class="line">$ pm2 start app.js --no-autorestart</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h1><ul>
+<li><a href="https://doesnotscale.com/deploying-node-js-with-pm2-and-nginx/" target="_blank" rel="external">Deploying Node.js with PM2 and Nginx</a></li>
+<li><a href="http://www.tutorialbook.co.kr/entry/PM2-%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-NodeJS-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0" target="_blank" rel="external">PM2 를 이용하여 NodeJS 프로세스 관리하기</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 depthFrom:1 depthTo:6 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#pm2&quot;&gt;PM2&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#설치&quot;&gt;설치&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#기본-사용&quot;&gt;기본 사
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="NodeJs" scheme="https://thefeeling.github.com/categories/javascript/nodejs/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+      <category term="NodeJs" scheme="https://thefeeling.github.com/tags/nodejs/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>자바스크립트 this 바인딩(함수/객체)</title>
+    <link href="https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/"/>
+    <id>https://thefeeling.github.com/2016/10/27/JavaScript-Concept-Function/</id>
+    <published>2016-10-27T08:27:27.000Z</published>
+    <updated>2016-10-27T16:38:33.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="JavaScript-this-바인딩-함수-객체"><a href="#JavaScript-this-바인딩-함수-객체" class="headerlink" title="JavaScript_this 바인딩(함수/객체)"></a>JavaScript_this 바인딩(함수/객체)</h1><p>자바스크립트에서 this는 함수/객체 실행에 따라서 바라보는(참조)하는 객체가 달라지게 된다.</p>
+<h2 id="객체"><a href="#객체" class="headerlink" title="객체"></a>객체</h2><p>객체 프로퍼티가 함수인 경우, 함수 내부에서 this는 객체를 가리키게 된다.</p>
+<p>다시 말해서, this는 그 매서드를 호출한 객체를 바라보게 된다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObject = &#123;</div><div class="line">  <span class="attr">value</span> : <span class="number">100</span>,</div><div class="line">  <span class="attr">getValue</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.value) <span class="comment">// 100;</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>프로퍼티가 함수인 경우, 간단하게 this가 가리키는 것이 객체가 된다고 생각할 수 있다. 하지만 함수 내부에서 다시 내부 함수를 사용할 경우, 그 내부함수에서 가리키게 되는 this는 일반 함수에서의 this가 가리키는 것과 동일하게 전역객체를 가리키게 된다. 그렇기 때문에 코드상에서 객체를 가리킬 수 있도록 임의로 객체를 참조하는 변수를 만들어서 사용하기도 한다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObject = &#123;</div><div class="line">  <span class="attr">value</span> : <span class="number">100</span>,</div><div class="line">  <span class="attr">getValue</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> that = <span class="keyword">this</span>; <span class="comment">// 일반적으로 that으로 참조 변수명을 정하는게 관례</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.value) <span class="comment">// 100;</span></div><div class="line">    <span class="keyword">var</span> func1 = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(that.value) <span class="comment">// 100;</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="함수"><a href="#함수" class="headerlink" title="함수"></a>함수</h2><p>기본적으로, 함수를 실행하게되면 this는 전역객체인 window(브라우저) / global(Node)를 가리키게 된다. 결과적으로 함수를 그냥 실행하느냐와 생성자 함수로 실행하느냐의 차이는 엄청나게 다르다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">this</span>.value = <span class="number">100</span>; <span class="comment">// window.value = 100;</span></div><div class="line">  <span class="keyword">this</span>.name = <span class="string">"kschoi"</span>; <span class="comment">// window.name = "kschoi"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="생성자-함수"><a href="#생성자-함수" class="headerlink" title="생성자 함수"></a>생성자 함수</h2><p>생성자 함수의 경우, 아래의 순서대로 인스턴스를 생성하게 된다.</p>
+<ul>
+<li>빈 객체를 생성하여, 빈 객체에 this를 바인딩하게 된다.</li>
+<li>빈 객체에 this를 바인딩하기 앞서, 객체의 <strong>proto</strong> 프로퍼티를 생성하여 함수 객체의 prototype 영역을 참조하게 한다</li>
+<li>이후 함수 내부 코드에서 this를 사용하여 객체에 속성 혹은 매소드를 생성하게 된다.<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = <span class="string">"kschoi"</span></div><div class="line">    <span class="keyword">this</span>.age = <span class="number">20</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> obj = &#123;&#125;;</div><div class="line">obj.__proto__ = Test.prototype;</div><div class="line">Test.call(obj);</div><div class="line"><span class="built_in">console</span>.log(obj);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>하나 눈여겨 볼 부분은 함수의 리턴값에 관련된 부분이다. 만약 함수에 리턴값이 없으면 ‘undefined’가 리턴되지만, 생성자 함수의 경우 생성된 객체를 리턴하게 된다. 하지만, 만약 생성자 함수에서 임의적으로 리턴하는 객체가 존재하게 되면 this를 사용하여 속성값 혹은 매소드를 생성한 객체를 리턴하는 것이 아닌 임의로 지정한 리턴 객체를 반환하게 된다.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;JavaScript-this-바인딩-함수-객체&quot;&gt;&lt;a href=&quot;#JavaScript-this-바인딩-함수-객체&quot; class=&quot;headerlink&quot; title=&quot;JavaScript_this 바인딩(함수/객체)&quot;&gt;&lt;/a&gt;JavaScript
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>자바스크립트 프로토타입</title>
+    <link href="https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/"/>
+    <id>https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/</id>
+    <published>2016-10-27T08:27:27.000Z</published>
+    <updated>2016-10-27T16:38:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="JavaScript-Prototype-amp-Prototype-Chainning"><a href="#JavaScript-Prototype-amp-Prototype-Chainning" class="headerlink" title="JavaScript_Prototype &amp; Prototype Chainning"></a>JavaScript_Prototype &amp; Prototype Chainning</h1><p>자바스크립트는 <strong>프로토타입</strong> 기반의 객체지향 언어로 일반적인 객체 지향 언어와 다른 특성을 가지고 있다.</p>
+<p>특히, 자바스크립트는 기본적으로는 원시타입과 참조타입으로 데이터 타입을 나눌 수 있지만, 엔진 내부에서는 원시타입 역시 객체로 <strong>오토박싱(AutoBoxing)</strong> 을 시켜서 객체형으로 변환하여 변수를 관리한다.(즉, 원시타입도 어떤 생성자 함수의 인스턴스이다.)</p>
+<h2 id="암묵적인-프로토타입-링크-implicit-prototype-link"><a href="#암묵적인-프로토타입-링크-implicit-prototype-link" class="headerlink" title="암묵적인 프로토타입 링크(implicit prototype link)"></a>암묵적인 프로토타입 링크(implicit prototype link)</h2><p>자바스크립트의 모든 객체는 프로토타입 (링크)객체를 가지고 있다. 프로토타입 객체란, 자신을 생성한 생성자 함수의 프로토타입 객체를 가리키는 일종의 링크 객체로 자바스크립트에서 상속을 구현하는 핵심 메카니즘이라고 할 수 있다.</p>
+<ul>
+<li>ECMA 표준에서는 이를 <strong>암묵적인 프로토타입 링크</strong> 라고 명칭한다.</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> foo = <span class="keyword">new</span> Person(<span class="string">'Choi'</span>);</div><div class="line"></div><div class="line">foo.__proto__ === Person.prototype</div></pre></td></tr></table></figure>
+<p>위 코드에서 foo 객체(인스턴스)의 프로토타입 링크는 foo 객체의 생성자인 Person 함수 객체의 <strong>[프로토타입]</strong> 영역을 가리키가 된다. 즉, 생성자 함수의 프로토타입 영역이 인스턴스의 프로토타입 링크가 가리키게 되는 객체가 되는 것이다.</p>
+<blockquote>
+<p>Chrome에서는 <em>proto</em> 라는 프로퍼티가 프로토타입 링크 역할을 하는 객체 프로퍼티가 된다.<br>즉, 숨겨진 프로토타입 링크 역할을 수행하게 되는 것이다.</p>
+</blockquote>
+<p>생성자 함수로 생성된 객체뿐만 아니라, 객체 리터럴도 프로토타입 링크를 가지게 되는데 왜냐하면 객체 리터럴 역시 내부적으로는 Object() 생성자 함수의 객체(인스턴스)이기 때문에, Object.Prototype 영역을 가리키는 암묵적인 프로토타입 링크를 가지게 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 객체 리터럴 생성</span></div><div class="line"><span class="keyword">var</span> obj = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 객체 리터럴도 Object 생성자 함수의 인스턴스이기 때문에 가리키는 프로토타입 링크와 프로토타입 영역은 동일한 객체를 바라보게 된다.</span></div><div class="line">obj.__proto__ === <span class="built_in">Object</span>.prototype</div></pre></td></tr></table></figure>
+<blockquote>
+<p>결과적으로, 기억해야 할 부분은 바로 <strong>객체리터럴 역시 Object() 생성자 함수의 인스턴스</strong> 라는 점이다.</p>
+</blockquote>
+<h2 id="프로토타입-체인-Prototype-Chainning"><a href="#프로토타입-체인-Prototype-Chainning" class="headerlink" title="프로토타입 체인(Prototype Chainning)"></a>프로토타입 체인(Prototype Chainning)</h2><p>자바스크립트에서 객체의 속성이나 매소드를 참조할 때, 객체에 해당 속성과 매소드가 없을 경우 <strong>프로토타입 링크</strong> 를 따라 프로토타입 객체의 프로퍼티를 차례대로 찾아가는 것을 <strong>프로토타입 체인</strong> 이라고 한다.</p>
+<blockquote>
+<p>객체의 속성을 읽거나 매소드를 호출(실행)할 때 프로토타입 체인이 작동한다</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObj = &#123;&#125;;</div><div class="line">myObj.name = <span class="string">"Choi"</span>;</div><div class="line"></div><div class="line">myObj.hasOwnProperty(<span class="string">'name'</span>); <span class="comment">// true</span></div><div class="line">myObj.hasOwnProperty(<span class="string">'age'</span>); <span class="comment">// false</span></div></pre></td></tr></table></figure>
+<p>위 코드에서 hasOwnProperty() 매소드를 사용할 수 있는 근거도 위에서 말한대로 객체 리터럴 역시 Object() 생성자 함수의 인스턴스이기 때문에, 객체의 프로토타입 링크는 Object() 생성자 함수 객체의 프로토타입 영역을 참조하게 된다. 그래서 기존 Object() 생성자 함수의 프로토타입 영역에 정의되어 있는 매소드인 hasOwnProperty(Native 영역의 함수)를 사용할 수 있는 것이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype</div><div class="line"><span class="built_in">Number</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype</div></pre></td></tr></table></figure>
+<p>이 밖에도, Number, String, Function 등의 생성자 함수들도 각자 프로토타입 영역을 가지고 있는데 <strong>프로토타입 영역은 곧 객체</strong> 이기 때문에 객체의 프로토타입 링크를 가지고 있게 된다. 이때 프로토타입 링크가 바라보게 되는 곳이 바로 Object()의 프로토타입 영역이기 때문에 실질적으로 모든 객체(인스턴스)에서 Object.prototype에 정의한 매서드들을 사용할 수 있는 것이 된다.</p>
+<h2 id="프로토타입-amp-amp-this"><a href="#프로토타입-amp-amp-this" class="headerlink" title="프로토타입 &amp;&amp; this"></a>프로토타입 &amp;&amp; this</h2><p>프로토타입 객체의 속성(프로퍼티)가 매서드인 경우, 결과적으로 <strong>this 키워드는 매서드를 호출한 객체를 바라보게 된다.</strong> 말이 어려운데 아래 예제를 살펴보면 쉽게 이해할 수 있을 것이다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Animal</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Animal.prototype.sayHello = <span class="function"><span class="keyword">function</span>(<span class="params">msg</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> alert(<span class="keyword">this</span>.name + <span class="string">"이 말합니다. "</span> + msg);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> tiger = <span class="keyword">new</span> Animal(<span class="string">'타이거'</span>);</div><div class="line">tiger.sayHello(<span class="string">'난 호랭이야!'</span>); <span class="comment">// 타이거가 말합니다. 난 호랭이야!</span></div></pre></td></tr></table></figure></p>
+<p>sayHello를 호출한 객체는 바로 tiger 객체이기 때문에, sayHello 매서드 내부의 this 키워드가 가리키는 것은 바로 tiger 객체 자체를 참조하게 된다.(이것은 일종의 자바스크립트의 법칙과도 같다.) 즉, 호출한 객체의 자체를 바라보게 되는 것인데 살짝 예제를 틀어서보면 재밌는 부분을 발견할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Animal.prototype.name = <span class="string">"강아지"</span>;</div><div class="line"><span class="comment">// 강아지가 말합니다. 난 강아지인데?!!!</span></div><div class="line">Animal.prototype.sayHello(<span class="string">'난 강아지인데?!!!'</span>);</div></pre></td></tr></table></figure>
+<p>첫 번쨰 예제와 두 번쨰 예제의 차이점은 sayHello() 매서도를 호출한 객체가 달라졌다는 부분이다. 다시 말해, 첫 번째 예제에서 sayHello()를 호출한 객체는 tiger 객체이기 때문에 this 키워드가 가리키는 객체는 tiger 객체가 되는 것이고, 두 번째 예제에서 sayHello()를 호출한 객체가 Animal.prototype 객체이기 때문에 this가 가리키는 녀석이 바로 Animal.prototype이 되는 것이다.</p>
+<blockquote>
+<p>정리해서, <strong>객체의 속성(프로퍼티)가 매소드일 경우 이를 호출한 this는 호출한 객체에 바인딩된다</strong> 가 결론이다.</p>
+</blockquote>
+<h2 id="디플트-프로토타입-링크"><a href="#디플트-프로토타입-링크" class="headerlink" title="디플트 프로토타입 링크"></a>디플트 프로토타입 링크</h2><p>함수를 작성하면 기본적으로 디폴트 프로토타입 영역이 생성이 된다. 이 디폴트 프로토타입 영역은 constructor 라는 속성을 가지는데 constructor 단어 그 자체의 의미처럼 작성한 함수 객체를 참조하는 프로퍼티이다. 그런데 재밌는 부분은 이 디폴트 프로토타입 객체는 개발자에 의해서 변경이 가능하다는 점이다. 그렇기 때문에 프로토타입 객체의 참조 관계를 임의로 개발자가 변경하여 사용하는 것이 가능하다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Weapon</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> machineGun = <span class="keyword">new</span> Weapon(<span class="string">'머신건'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 1번 문제</span></div><div class="line">machineGun.__proto__.constructor === Weapon.prototype.constructor</div><div class="line"></div><div class="line">Weapon.prototype = &#123;</div><div class="line">    <span class="attr">sayWeaponName</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> newGun = <span class="keyword">new</span> Weapon(<span class="string">'뉴건'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 2번 문제</span></div><div class="line">machineGun.__proto__ === newGun.__proto__</div></pre></td></tr></table></figure>
+<p>첫 번째 문제의 경우, Weapon 생성자 함수의 인스턴스인 machineGun의 프로토타입 링크는 Weapon 생성자 함수 객체의 프로토타입 영역을 가리키고 있기 때문에 두 객체의 constructor 는 동일한 녀석인 Weapon 생성자 함수를 가리키게 된다.</p>
+<p>두 번째 문제의 경우, machineGun의 프로토타입 링크가 끊어지지 않은 상태에서 Weapon 함수 객체의 프로토타입 영역을 다른 객체로 대체했다. 이렇게 되면 기존 machineGun의 프로토타입 링크는 그대로 유지되는 반면에 새롭게 생성되는 newGun 객체의 프로토타입 링크는 새롭게 정의된 프로토타입 객체를 바라보게 되면서 2번 문제의 경우 다른 객체를 바라보게 됨에 따라 “false”인 결과가 나오게 된다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=7400243" target="_blank" rel="external">인사이드 자바스크립트</a></li>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=6960939" target="_blank" rel="external">자바스크립트 객체지향 프로그래밍</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;JavaScript-Prototype-amp-Prototype-Chainning&quot;&gt;&lt;a href=&quot;#JavaScript-Prototype-amp-Prototype-Chainning&quot; class=&quot;headerlink&quot; title=&quot;Java
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Node.Js] - Express.Js 기본 개념 및 사용 방법</title>
+    <link href="https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/"/>
+    <id>https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/</id>
+    <published>2016-10-27T08:27:27.000Z</published>
+    <updated>2016-10-27T16:37:31.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 -->
+<ul>
+<li><a href="#Express-js">Express.js</a><ul>
+<li><a href="#설치">설치</a></li>
+<li><a href="#Express-Generator">Express Generator</a></li>
+<li><a href="#기본-라우팅-및-핸들러">기본 라우팅 및 핸들러</a><ul>
+<li><a href="#라우팅-형태">라우팅 형태</a></li>
+</ul>
+</li>
+<li><a href="#미들웨어">미들웨어</a></li>
+<li><a href="#요청-및-응답">요청 및 응답</a><ul>
+<li><a href="#Express-어플리케이션-처리-흐름"><strong>Express 어플리케이션 처리 흐름</strong></a></li>
+<li><a href="#요청-프로퍼티-및-매소드">요청 프로퍼티 및 매소드</a></li>
+<li><a href="#응답-프로퍼티-및-매소드">응답 프로퍼티 및 매소드</a></li>
+</ul>
+</li>
+<li><a href="#template-engine">Template Engine</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+<h1 id="Express-js"><a href="#Express-js" class="headerlink" title="Express.js"></a>Express.js</h1><p>HTTP 요청에 대하여 <strong>라우팅</strong> 및 <strong>미들웨어</strong> 기능을 제공하는 웹 프레임워크</p>
+<ul>
+<li><p><strong>라우팅(routing)</strong> 은 기본적으로 어플리케이션 서버에서 경로를 제어하는 목적</p>
+<blockquote>
+<p>목적지까지 갈 수 있는 여러 경로 중 한 가지 경로를 설정해 주는 과정.</p>
+</blockquote>
+</li>
+<li><p><strong>미들웨어(middleware)</strong> 는 중간에 껴넣는다는 의미로 부가적인 기능이나 처리를 제공하는 목적</p>
+<blockquote>
+<p>이기종의 환경을 연결해주는 소프트웨어를 가리킴</p>
+</blockquote>
+<p>▶ Express.js에서 사용할 수 있는 <strong>중간처리</strong> 목적의 소프트웨어/모듈</p>
+<p>▶ 최종 요청 핸들러 이전의 <strong>Express 라우팅 계층에 의해 호출되는 함수</strong></p>
+</li>
+</ul>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm init</div><div class="line">npm install express --save</div></pre></td></tr></table></figure>
+<h2 id="Express-Generator"><a href="#Express-Generator" class="headerlink" title="Express Generator"></a>Express Generator</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install express-generator -g</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">express -h</div></pre></td></tr></table></figure>
+<p><img src="http://i.imgur.com/8b7CLJe.png" alt="express_generator"></p>
+<ul>
+<li><strong>기본적인 어플리케이션 골격 생성</strong></li>
+<li>handlebars, hogan, jade 등 템플릿 엔진 추가 가능</li>
+<li>css, .gitignore 등 옵션 추가 가능</li>
+</ul>
+<h2 id="기본-라우팅-및-핸들러"><a href="#기본-라우팅-및-핸들러" class="headerlink" title="기본 라우팅 및 핸들러"></a>기본 라우팅 및 핸들러</h2><p>라우팅(Routing) 이란 URL(URI) 요청에 따라 어플리케이션이 응답하는 방법을 결정.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * METHOD : Http Method(GET, POST, PUT, DELETE, PATCH 등)</div><div class="line"> * PATH : [경로]</div><div class="line"> * HANDLER : [경로 접근 시, 처리 핸들러]</div><div class="line"> */</div><div class="line">app.METHOD(PATH, HANDLER)</div></pre></td></tr></table></figure>
+<h3 id="라우팅-형태"><a href="#라우팅-형태" class="headerlink" title="라우팅 형태"></a>라우팅 형태</h3><p>라우팅 URL 패스는 기본적으로 문자열뿐만 아니라 문자열 패턴 혹은 정규식으로 표현이 가능하다.(path-to-regexp)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Sample</span></div><div class="line">app.get(<span class="string">'/home'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</div><div class="line">      res.send(<span class="string">"Hello World"</span>);</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">// abcd, abbcd 및 abbbcd</span></div><div class="line">app.get(<span class="string">'/ab+cd'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab+cd'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// abcd, abxcd, abRABDOMcd</span></div><div class="line">app.get(<span class="string">'/ab*cd'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab*cd'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// abe 및 abcde</span></div><div class="line">app.get(<span class="string">'/ab(cd)?e'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab(cd)?e'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>라우팅 핸들러(콜백 함수)는 하나 이상으로 설정이 가능하다.(next 인자를 반드시 설정해야 한다.) 라우팅에 대한 핸들링을 2개 이상을 등록하여 사용할 수 있기 때문에 굳이 하나의 핸들러에 모든 로직이나 코드를 넣어서 처리할 이유가 전혀 없다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> cb0 = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'CB0'</span>);</div><div class="line">      next();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cb1 = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'CB1'</span>);</div><div class="line">      next();</div><div class="line">&#125;</div><div class="line"></div><div class="line">app.get(<span class="string">'/example/a'</span>, [cb0, cb1], <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'the response will be sent by the next function ...'</span>);</div><div class="line">      next();</div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'Hello from A!'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.get(<span class="string">'/example/b'</span>,</div><div class="line"><span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'first handler'</span>);</div><div class="line">      next();</div><div class="line">&#125;,</div><div class="line"><span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'second handler'</span>);</div><div class="line">      res.send(<span class="string">'Hello from B!'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>모듈식으로 등록하는 개념으로 express.Router 매소드를 활용하여 파일 단위로 모듈화를 시켜서 라우팅을 등록할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// [birds.js]</span></div><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> router = express.Router();</div><div class="line"></div><div class="line"><span class="comment">// middleware that is specific to this router</span></div><div class="line">router.use(<span class="function"><span class="keyword">function</span> <span class="title">timeLog</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'Time: '</span>, <span class="built_in">Date</span>.now());</div><div class="line">      next();</div><div class="line">&#125;);</div><div class="line"><span class="comment">// define the home page route</span></div><div class="line">router.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'Birds home page'</span>);</div><div class="line">&#125;);</div><div class="line"><span class="comment">// define the about route</span></div><div class="line">router.get(<span class="string">'/about'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'About birds'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = router;</div></pre></td></tr></table></figure>
+<p>위에서 작성된 bird.js을 하단과 같이 로드하면 /birds/, /birds/about 으로 라우팅이 등록되어 사용할 수 있다. 모듈 단위(파일)로 작성하여 등록하는 방식이기 때문에, 라우팅 관리가 편하며 추후에 라우팅을 추가한다고 해도 확장성이 있어 보인다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> birds = <span class="built_in">require</span>(<span class="string">'./birds'</span>);</div><div class="line">app.use(<span class="string">'/birds'</span>, birds);</div></pre></td></tr></table></figure></p>
+<h2 id="미들웨어"><a href="#미들웨어" class="headerlink" title="미들웨어"></a>미들웨어</h2><ul>
+<li><strong>Application</strong><ul>
+<li><strong>어플리케이션 전체 영역</strong> 에서 처리 가능. 앱에 대한 Request가 발생할 떄 마다 실행</li>
+</ul>
+</li>
+<li><p><strong>Router</strong></p>
+<ul>
+<li><p><strong>라우터 단위</strong> 로 Request가 발생하면 실행</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"><span class="keyword">var</span> router = express.Router();</div><div class="line"></div><div class="line">router.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'Time:'</span>, <span class="built_in">Date</span>.now());</div><div class="line">      next();</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>위에서 설명했던 라우팅 방식 중 모듈 단위(파일) 라우팅 시 사용하면 유용</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p><strong>Error Handling</strong></p>
+<ul>
+<li>기본적으로 4개의 인자가 필요(인자의 숫자로 오류 처리 미들웨어 판별)  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">      app.use(<span class="function"><span class="keyword">function</span>(<span class="params">err, req, res, next</span>) </span>&#123;</div><div class="line">            <span class="built_in">console</span>.error(err.stack);</div><div class="line">            res.status(<span class="number">500</span>).send(<span class="string">'Something broke!'</span>);</div><div class="line">      &#125;);</div><div class="line">      <span class="string">``</span><span class="string">`  </span></div><div class="line">- **Basic(Default)**</div><div class="line">  - express.static(root, [options])</div><div class="line">     - 어플리케이션 정적 자원 설정(CSS,HTML,JS) 등</div><div class="line">     - 2개 이상의 정적 디렉토리 설정 가능</div><div class="line">      `<span class="string">``</span>javascript</div><div class="line">      <span class="keyword">var</span> options = &#123;</div><div class="line">        <span class="attr">dotfiles</span>: <span class="string">'ignore'</span>,</div><div class="line">        <span class="attr">etag</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">extensions</span>: [<span class="string">'htm'</span>, <span class="string">'html'</span>],</div><div class="line">        <span class="attr">index</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">maxAge</span>: <span class="string">'1d'</span>,</div><div class="line">        <span class="attr">redirect</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">setHeaders</span>: <span class="function"><span class="keyword">function</span> (<span class="params">res, path, stat</span>) </span>&#123;</div><div class="line">          res.set(<span class="string">'x-timestamp'</span>, <span class="built_in">Date</span>.now());</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      app.use(express.static(<span class="string">'public'</span>));</div><div class="line">      app.use(express.static(<span class="string">'uploads'</span>));</div><div class="line">      app.use(express.static(<span class="string">'files'</span>));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>Third-Party</strong></p>
+<ul>
+<li>Application Level 및 Router Level에 서트파티 미들웨어 설정이 가능하다</li>
+<li><a href="http://expressjs.com/ko/resources/middleware.html" target="_blank" rel="external">대표적인 미들웨어 종류</a>를 참고하여 설정하자.</li>
+<li>Express의 경우, 초기버젼과 다르게 대부분 서드파티 미들웨어 사용을 권고하고 있다. 그렇기 때문에, 자주 사용하는 조합을 찾아놓고 사용하는 것이 개발 속도면에서나 안정성면에서나 유리하다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="요청-및-응답"><a href="#요청-및-응답" class="headerlink" title="요청 및 응답"></a>요청 및 응답</h2><h3 id="Express-어플리케이션-처리-흐름"><a href="#Express-어플리케이션-처리-흐름" class="headerlink" title="Express 어플리케이션 처리 흐름"></a><strong>Express 어플리케이션 처리 흐름</strong></h3><ul>
+<li>미들웨어를 선 처리</li>
+<li>개별 라우팅 주소 값에 맞는 라우팅 핸들러를 실행</li>
+<li>HTTP 요청에 대한 응답을 실행</li>
+</ul>
+<p><img src="http://i.imgur.com/oGUSkq8.png" alt="express-diagram"></p>
+<p>기본적으로, Request 및 Response는 객체이며 HTTP 요청과 응답과 관련된 매서드와 프로퍼티(상태값 등)을 가지고 있다. <strong>Query String, Parameter, Body, HTTP Header 기타 등등</strong> 심지어 xhr 요청 유무까지 확인 가능한 프로퍼티가 있다. 너무 많기에 관련된 내용은 하단 링크를 통하여 확인하도록 하자</p>
+<h3 id="요청-프로퍼티-및-매소드"><a href="#요청-프로퍼티-및-매소드" class="headerlink" title="요청 프로퍼티 및 매소드"></a>요청 프로퍼티 및 매소드</h3><ul>
+<li>링크 참고 (<a href="http://expressjs.com/ko/4x/api.html#req" target="_blank" rel="external">http://expressjs.com/ko/4x/api.html#req</a>)<h3 id="응답-프로퍼티-및-매소드"><a href="#응답-프로퍼티-및-매소드" class="headerlink" title="응답 프로퍼티 및 매소드"></a>응답 프로퍼티 및 매소드</h3></li>
+<li>링크 참고 (<a href="http://expressjs.com/ko/4x/api.html#res" target="_blank" rel="external">http://expressjs.com/ko/4x/api.html#res</a>)</li>
+</ul>
+<h2 id="Template-Engine"><a href="#Template-Engine" class="headerlink" title="Template Engine"></a>Template Engine</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Setting</span></div><div class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'jade'</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Router</span></div><div class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.render(<span class="string">'main'</span>, &#123;<span class="attr">msg</span> : <span class="string">"HelloWorld!"</span>&#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>express에서 자주 사용하는 뷰 템플릿 엔진은 하단과 같다.</p>
+<ul>
+<li><a href="https://github.com/pugjs/pug" target="_blank" rel="external">jade(pug)</a></li>
+<li><a href="https://www.npmjs.com/package/ejs" target="_blank" rel="external">ejs</a></li>
+<li><a href="http://handlebarsjs.com/" target="_blank" rel="external">handlebars</a></li>
+</ul>
+<p>React같이 View만을 전문적으로 처리하는 라이브러리가 유행이고, 동형(Isomorphic) 처리라고 하여 서버 사이드에서도 클라이언트 사이드(브라우저)와 같이 뷰를 렌더링하자 라는 테마가 요즘 유행이다.(하지만 나에게는 너무 어렵다…어려워….) 마지막으로 배우고 익혔던 AngularJS도 좋지만 이 녀석은 사용해야 할 성격이 분명히 존재하는거 같다(SEO가 필요한 사이트에서는 쥐약인듯)</p>
+<p>아무튼 express에서 뷰 렌더링이 필요하다면 위 3개정도가 가장 현실적으로 사용할만한 템플릿 엔진인것은 분명하다. 만약 뷰단까지 같이 셋팅이 되어 있는 프로젝트가 필요하다면 <a href="http://yeoman.io/" target="_blank" rel="external">Yeoman</a>이나 <a href="http://megaboilerplate.com/" target="_blank" rel="external">Mega Boilerplate</a>에서 필요한 리소스를 확보하면 된다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a href="http://expressjs.com/" target="_blank" rel="external">Express.js</a></li>
+<li><a href="https://github.com/expressjs" target="_blank" rel="external">Express.js Github page</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#Express-js&quot;&gt;Express.js&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#설치&quot;&gt;설치&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#Express-Generator&quot;&gt;
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="NodeJs" scheme="https://thefeeling.github.com/categories/javascript/nodejs/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+      <category term="NodeJs" scheme="https://thefeeling.github.com/tags/nodejs/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[ES6] - Destructuring Assignment(해체할당) - 객체</title>
+    <link href="https://thefeeling.github.com/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-object/"/>
+    <id>https://thefeeling.github.com/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-object/</id>
+    <published>2016-10-26T09:52:30.000Z</published>
+    <updated>2016-10-27T08:24:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 -->
+<ul>
+<li><a href="#객체-해체-할당">객체 해체 할당</a><ul>
+<li><a href="#기본적인-객체-해체-할당">기본적인 객체 해체 할당</a></li>
+<li><a href="#기본-값-할당">기본 값 할당</a></li>
+<li><a href="#중첩-객체-할당">중첩 객체 할당</a></li>
+<li><a href="#조합-프로퍼티명-해체">조합 프로퍼티명 해체</a></li>
+<li><a href="#함수-파라미터-해체-할당">함수 파라미터 해체 할당</a></li>
+</ul>
+</li>
+<li><a href="#요약">요약</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<p>앞에서 해체 할당 중 배열에 관련된 부분을 포스팅했었는데, 이번에는 객체에 관련된 내용으로 포스팅 할려고 한다. 기본적인 내용은 앞에서 포스팅 한 배열과 비슷하다.</p>
+<h3 id="객체-해체-할당"><a href="#객체-해체-할당" class="headerlink" title="객체 해체 할당"></a>객체 해체 할당</h3><h4 id="기본적인-객체-해체-할당"><a href="#기본적인-객체-해체-할당" class="headerlink" title="기본적인 객체 해체 할당"></a>기본적인 객체 해체 할당</h4><p>배열 해체 할당과 거의 비슷한데, 차이점이라고 하면 별도로 지정하지 않는다면 해체 할당 할 대상 <strong>프로퍼티와 변수명이 동일해야 할당이 가능하다</strong> 는 점이다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> name,age;</div><div class="line">(&#123;name,age&#125; = &#123;</div><div class="line">    <span class="attr">name</span> : <span class="string">"dev"</span>,</div><div class="line">    <span class="attr">age</span> : <span class="number">20</span></div><div class="line">&#125;); <span class="comment">// 소괄호 포함해야 함!</span></div><div class="line"><span class="built_in">console</span>.log(name, age); <span class="comment">// dev 20</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> &#123;name, age&#125; = &#123;</div><div class="line">    <span class="attr">name</span> : <span class="string">"dev"</span>,</div><div class="line">    <span class="attr">age</span> : <span class="number">20</span></div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(name, age); <span class="comment">// dev 20</span></div></pre></td></tr></table></figure>
+<p>해체 할당을 받을 변수의 명과 객체의 프로퍼티 명이 <strong>다를 경우는 아래와 같이 매핑되는 변수명을 명시해야 한다.</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> &#123;<span class="attr">name</span> : x, age, : y&#125; = &#123;</div><div class="line">    <span class="attr">name</span> : <span class="string">"dev"</span>,</div><div class="line">    <span class="attr">age</span> : <span class="number">20</span></div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(x, y); <span class="comment">// dev 20</span></div></pre></td></tr></table></figure></p>
+<h4 id="기본-값-할당"><a href="#기본-값-할당" class="headerlink" title="기본 값 할당"></a>기본 값 할당</h4><p>객체 프로퍼티가 존재하지 않을 경우(undefined), 기본 값 할당이 가능하다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> &#123;a,b=<span class="number">10</span>&#125; = &#123;</div><div class="line">    <span class="attr">a</span> : <span class="number">5</span></div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(a,b); <span class="comment">// 5 10</span></div></pre></td></tr></table></figure></p>
+<h4 id="중첩-객체-할당"><a href="#중첩-객체-할당" class="headerlink" title="중첩 객체 할당"></a>중첩 객체 할당</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="attr">code</span> : <span class="number">200</span>,</div><div class="line">    <span class="attr">msg</span> : <span class="string">"success"</span>,</div><div class="line">    <span class="attr">data</span> : [&#123;</div><div class="line">        <span class="attr">name</span> : <span class="string">"name"</span>,</div><div class="line">        <span class="attr">age</span> : <span class="number">20</span></div><div class="line">    &#125;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>위 json 예제처럼 중첩 객체는 아주 익숙하고 자연스럽다. 예를 들어, ajax 통신으로 서버에서 특정 값을 받아올 때 중첩된 객체로 값을 받아오는 경우는 아주 익숙한 경우이다. 이런 중첩 객체를 해체 할당으로 편하게 나눠보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> &#123;a,b,<span class="attr">c</span> : &#123;x,y&#125;&#125; = &#123;</div><div class="line">    <span class="attr">a</span> : <span class="string">"a"</span>,</div><div class="line">    <span class="attr">b</span> : <span class="string">"b"</span>,</div><div class="line">    <span class="attr">c</span> : &#123;</div><div class="line">        <span class="attr">x</span> : <span class="number">10</span>,</div><div class="line">        <span class="attr">y</span> : <span class="number">20</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(a,b,c);</div><div class="line"><span class="built_in">console</span>.log(x,y);</div></pre></td></tr></table></figure>
+<p>여기서 변수 c에는 아무런 값도 할당되지 않는다. 왜냐하면, c에 대응하는 {x,y}를 선언해놨기 때문에 해당 표현식은 <em>c프로퍼티는 객체 {x,y}로 매핑</em> 으로 이해해야 한다. 대응되는 매핑에서도 x,y로 매핑을 해놨기 때문에 실질적으로 생성되는 변수는 <em>a,b,x,y</em> 이다. 표현식 식별이 어렵다면 아래와 같이 해체 할당을 2단계로 나눠서 하는 것도 방법일 수 있다.(코드의 가독성이 중요할 수 도 있다.)<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> &#123;a,b,c&#125; = &#123;</div><div class="line">    <span class="attr">a</span> : <span class="string">"a"</span>,</div><div class="line">    <span class="attr">b</span> : <span class="string">"b"</span>,</div><div class="line">    <span class="attr">c</span> : &#123;</div><div class="line">        <span class="attr">x</span> : <span class="number">10</span>,</div><div class="line">        <span class="attr">y</span> : <span class="number">20</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">let</span> &#123;x,y&#125; = c;</div><div class="line"><span class="built_in">console</span>.log(a,b,c); <span class="comment">// a b &#123; x: 10, y: 20 &#125;</span></div><div class="line"><span class="built_in">console</span>.log(x,y); <span class="comment">// 10 20</span></div></pre></td></tr></table></figure></p>
+<h4 id="조합-프로퍼티명-해체"><a href="#조합-프로퍼티명-해체" class="headerlink" title="조합 프로퍼티명 해체"></a>조합 프로퍼티명 해체</h4><p>프로퍼티명을 동적으로 조합하여 이를 변수에 할당 할 수 있다. <strong>동적으로 조합할 경우 []로 감싸야 하며</strong> 감싼 내부에는 표현식이 들어갈 수 있다. 그때 그때 바뀔 수 있는 프로퍼티명을 참조하고 이를 변수에 할당하는 경우에 유용하게 쓰일 수 있을꺼 같다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> first = <span class="string">"first"</span>;</div><div class="line"><span class="keyword">let</span> name = <span class="string">"Name"</span>;</div><div class="line"><span class="keyword">let</span> data = &#123;</div><div class="line">    <span class="attr">firstName</span> : <span class="string">"데니얼"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">let</span> &#123;[first+name] : x&#125; = data;</div><div class="line"><span class="comment">// let &#123;["first" + "Name"] : x&#125; = data;</span></div><div class="line"><span class="built_in">console</span>.log(x);</div></pre></td></tr></table></figure></p>
+<h4 id="함수-파라미터-해체-할당"><a href="#함수-파라미터-해체-할당" class="headerlink" title="함수 파라미터 해체 할당"></a>함수 파라미터 해체 할당</h4><p>함수 인자/파라미터에서 기본 값 할당이 가능하고 이를 객체/배열 해체 할당으로도 확장하여 할당하는 것이 가능하다. 아래 예제를 한번 살펴보자.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">sayHello</span>(<span class="params">&#123;a : x, b : y&#125; = &#123;a : <span class="string">"Mc"</span>, b: <span class="string">" MinJi"</span>&#125;</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> x+y;</div><div class="line">&#125;</div><div class="line"><span class="keyword">let</span> obj = &#123;</div><div class="line">    <span class="attr">a</span> : <span class="string">"Yo~ MC"</span>,</div><div class="line">    <span class="attr">b</span> : <span class="string">" MinJi!!"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(sayHello(obj)); <span class="comment">// 1) Yo~ MC MinJi!!</span></div><div class="line"><span class="built_in">console</span>.log(sayHello(<span class="literal">undefined</span>)); <span class="comment">// 2) Mc MinJi</span></div><div class="line"><span class="built_in">console</span>.log(sayHello()); <span class="comment">// 3) Mc MinJi</span></div></pre></td></tr></table></figure></p>
+<p>sayHello 함수의 인자 부분을 한번 보자. 해석하자면 <strong><em>함수는 2개의 파라미터(x,y)를 받는데 함수 호출 시 넘어오는 인자는 객체이다. 넘어오는 객체를 해체 할당을 하며 해체 할당 시 만약 넘어오는 객체가 없거나 undefined라면, 기본 값(객체)을 지정하여 할당을 한다.</em></strong></p>
+<p>하단 로그를 호출하는 코드 부분을 보자. 1)의 경우 함수 호출 시, 인자를 넘긴 경우고 나머지 경우는 인자 값을 생략하여 넘긴 경우이다.(함수 인자를 넘기지 않으면 기본적으로 값을 받는 파라미터는 undefined로 초기화된다.)</p>
+<h3 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h3><ul>
+<li>해체 할당은 편하다.</li>
+<li>해체 할당은 객체/배열 해체 할당으로 나뉜다.</li>
+<li>해체 할당 시 기본 값 할당이 가능하다.</li>
+<li>해체 할당은 함수 파라미터 부분에서 활용 가능하며 유연한 코드 작성을 도와준다.</li>
+</ul>
+<h3 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h3><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=10087062" target="_blank" rel="external">ECMAScript 6 길들이기</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#객체-해체-할당&quot;&gt;객체 해체 할당&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#기본적인-객체-해체-할당&quot;&gt;기본적인 객체 해체 할당&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#기
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="ES6" scheme="https://thefeeling.github.com/categories/javascript/es6/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[ES6] - Destructuring Assignment(해체할당) - 배열</title>
+    <link href="https://thefeeling.github.com/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-array/"/>
+    <id>https://thefeeling.github.com/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-array/</id>
+    <published>2016-10-26T08:28:27.000Z</published>
+    <updated>2016-10-27T08:24:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 -->
+<ul>
+<li><a href="#es6이전의-배열-및-객체의-해체-할당">ES6이전의 배열 및 객체의 해체 할당</a></li>
+<li><a href="#배열-해체-할당">배열 해체 할당</a><ul>
+<li><a href="#기본적인-해체-할당의-경우">기본적인 해체 할당의 경우</a></li>
+<li><a href="#좌변-및-우변의-개수가-매칭이-안되는-경우">좌변 및 우변의 개수가 매칭이 안되는 경우</a></li>
+<li><a href="#건너뛰어-할당할-수-있다">건너뛰어 할당할 수 있다.</a></li>
+<li><a href="#나머지-연산자를-활용하여-배열로-할당-가능">나머지 연산자를 활용하여 배열로 할당 가능</a></li>
+<li><a href="#기본-값-할당">기본 값 할당</a></li>
+<li><a href="#중첩-해체-할당">중첩 해체 할당</a></li>
+<li><a href="#함수-파라미터-해체-할당-사용">함수 파라미터 해체 할당 사용</a></li>
+</ul>
+</li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<p>해체 할당이라고 한글로 명명하는데 영어로는 Destructuring Assignment이다. 이터러블한 객체나 배열의 개별 값을 변수로 할당하는 표현식으로 정의할 수 있다. 다시 말해, <strong>배열/객체의 개별 내용을 변수로 바인딩하는 표현식이다.</strong></p>
+<ul>
+<li>배열 해체 할당</li>
+<li>객체 해체 할당</li>
+</ul>
+<p>배열/객체 해체 할당 2가지로 나뉘며, 이런 기능은 다른 언어(펄, 파이썬)에는 기본으로 내장된 기능이라고 한다.</p>
+<h3 id="ES6이전의-배열-및-객체의-해체-할당"><a href="#ES6이전의-배열-및-객체의-해체-할당" class="headerlink" title="ES6이전의 배열 및 객체의 해체 할당"></a>ES6이전의 배열 및 객체의 해체 할당</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Array</span></div><div class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</div><div class="line"><span class="keyword">var</span> num1 = arr[<span class="number">0</span>];</div><div class="line"><span class="keyword">var</span> num2 = arr[<span class="number">1</span>];</div><div class="line"><span class="keyword">var</span> num3 = arr[<span class="number">2</span>];</div><div class="line"></div><div class="line"><span class="comment">// object</span></div><div class="line"><span class="keyword">var</span> obj =&#123;</div><div class="line">    <span class="attr">name</span> : <span class="string">"D.Choi"</span>,</div><div class="line">    <span class="attr">age</span>  : <span class="number">20</span>,</div><div class="line">    <span class="attr">addr</span> : <span class="string">"seoul"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> name = obj.name;</div><div class="line"><span class="keyword">var</span> age  = obj.age;</div><div class="line"><span class="keyword">var</span> addr = obj.addr;</div></pre></td></tr></table></figure>
+<p>ES6 이전에는 배열이나 객체의 개별 내용에 대하여 위와 같은 형식으로 해체 하는 코드를 작성하는 경우가 많았다. 물론 위 코드의 경우 값이 그렇게 많지 않아서 해체 하는 코드 라인이 길지 않지만, 경우에 따라 몽땅 해체를 하는 경우가 있을 수도 있기 때문에 반복적이면서 수동적인 느낌의 코드가 많이 생길 수 있었다. 이런 불필요한 작업을 피하기 위해서 ES6에서는 이런 코드의 생산을 방지하는 해체 할당을 추가한 것이다.</p>
+<h3 id="배열-해체-할당"><a href="#배열-해체-할당" class="headerlink" title="배열 해체 할당"></a>배열 해체 할당</h3><h4 id="기본적인-해체-할당의-경우"><a href="#기본적인-해체-할당의-경우" class="headerlink" title="기본적인 해체 할당의 경우"></a>기본적인 해체 할당의 경우</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> arr = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>];</div><div class="line"><span class="keyword">let</span> a,b,c;</div><div class="line">[a,b,c] = arr;</div></pre></td></tr></table></figure>
+<p>간단한 배열 해체 할당의 코드이다. 위 코드에서 [a,b,c]가 해체 할당에 해당하는 코드이다. 위 코드의 경우 변수 선언 후 좌변에는 우변에 매칭되는 변수를 배치한 형태인데 이를 아래와 같이 좀 더 간단하게 줄여서 표현이 가능하다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> [a,b,c] = arr;</div><div class="line"><span class="keyword">let</span> [x,y,z] = [<span class="string">'Tiger'</span>, <span class="string">'Bird'</span>, <span class="string">'Dog'</span>]</div></pre></td></tr></table></figure>
+<h4 id="좌변-및-우변의-개수가-매칭이-안되는-경우"><a href="#좌변-및-우변의-개수가-매칭이-안되는-경우" class="headerlink" title="좌변 및 우변의 개수가 매칭이 안되는 경우"></a>좌변 및 우변의 개수가 매칭이 안되는 경우</h4><p>간단한 해체 할당에 대하여 알아봤는데 그렇다면, 좌변/우변의 갯수가 매칭되지 않은 경우는 어떻게 되는지 한번 살펴보자.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 좌변 변수명 생략</span></div><div class="line"><span class="keyword">let</span> [x,y] = [<span class="string">'Tiger'</span>, <span class="string">'Bird'</span>, <span class="string">'Dog'</span>]</div><div class="line"><span class="built_in">console</span>.log(x,y); <span class="comment">// Tiger Bird</span></div><div class="line"></div><div class="line"><span class="comment">// 우변 배열 갯수가 모자란 경우</span></div><div class="line"><span class="keyword">let</span> [x,y,z] = [<span class="string">'Tiger'</span>, <span class="string">'Bird'</span>];</div><div class="line"><span class="built_in">console</span>.log(x,y,z); <span class="comment">// Tiger Bird undefined</span></div></pre></td></tr></table></figure></p>
+<p>좌변의 변수가 우변의 배열 개수보다 적으면 우변의 나머지 요소들은 바인딩되지 않는다. (x,y에만 값이 할당된다.) 반대로, 우변 배열 요소의 갯수가 좌변 변수의 숫자보다 적을 경우는 나머지에 해당하는 좌변 변수에 undefined로 바인딩된다.</p>
+<h4 id="건너뛰어-할당할-수-있다"><a href="#건너뛰어-할당할-수-있다" class="headerlink" title="건너뛰어 할당할 수 있다."></a>건너뛰어 할당할 수 있다.</h4><p>특이하게 본 부분인데, 배열과 변수를 연속적으로 할당하는 개념에서 건어뛰어 할당하는 방법도 가능하다고 한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> [x,,z] = [<span class="string">'Tiger'</span>, <span class="string">'Bird'</span>, <span class="string">'Dog'</span>]</div><div class="line"><span class="built_in">console</span>.log(x,z); <span class="comment">// Tiger Dog</span></div></pre></td></tr></table></figure>
+<h4 id="나머지-연산자를-활용하여-배열로-할당-가능"><a href="#나머지-연산자를-활용하여-배열로-할당-가능" class="headerlink" title="나머지 연산자를 활용하여 배열로 할당 가능"></a>나머지 연산자를 활용하여 배열로 할당 가능</h4><p>앞에서 간단하게 소개했던 나머지 연산을 활용할 수 있다. 나머지 연산을 통하여 나머지 값에 해당하는 요소들은 배열로 할당할 수 있는 것이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> [x, ...y] = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>];</div><div class="line"><span class="built_in">console</span>.log(x); <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(<span class="built_in">Array</span>.isArray(y)); <span class="comment">// true</span></div><div class="line"><span class="built_in">console</span>.log(y); <span class="comment">// [2,3,4,5,6,7,8,9,10]</span></div></pre></td></tr></table></figure>
+<h4 id="기본-값-할당"><a href="#기본-값-할당" class="headerlink" title="기본 값 할당"></a>기본 값 할당</h4><p>위에서 좌변/우변의 변수/요소 갯수가 일치하지 않았을 때, 변수에 undefined로 할당되거나 무시된다고 했는데, 이를 보완하는 측면에서 기본 값을 할당할 수 있다고 한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> [a,b,c=<span class="number">3</span>] = [<span class="number">1</span>,<span class="number">2</span>];</div><div class="line"><span class="built_in">console</span>.log(a,b,c); <span class="comment">// 1 2 3</span></div></pre></td></tr></table></figure>
+<h4 id="중첩-해체-할당"><a href="#중첩-해체-할당" class="headerlink" title="중첩 해체 할당"></a>중첩 해체 할당</h4><p>주어진 배열이 중첩하여 배열의 요소를 가지고 있는 경우가 많다. 이런 경우에도 해당 내용을 해체 할당할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> [a,b,[c,d]] = [<span class="number">1</span>,<span class="number">2</span>,[<span class="number">3</span>,<span class="number">4</span>]];</div><div class="line"><span class="built_in">console</span>.log(a,b,c,d); <span class="comment">// 1,2,3,4</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> [a,b,c] = [<span class="number">1</span>,<span class="number">2</span>,[<span class="number">3</span>,<span class="number">4</span>]];</div><div class="line"><span class="built_in">console</span>.log(a,b,c); <span class="comment">// 1 2 [ 3, 4 ]</span></div></pre></td></tr></table></figure>
+<p><em>그만해 임마..복잡하다</em></p>
+<h4 id="함수-파라미터-해체-할당-사용"><a href="#함수-파라미터-해체-할당-사용" class="headerlink" title="함수 파라미터 해체 할당 사용"></a>함수 파라미터 해체 할당 사용</h4><p>위에서 배열 해체 할당에서도 기본 값 할당이 가능하다고 했는데, 이를 함수의 인자/파라미터에도 적용이 가능하다.<br><em>위에서 배웠던 내용을 몽땅 섞으면 꽤나 복잡한 표현식이 가능할꺼 같다…</em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 예1)</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">[a,b,c=<span class="number">3</span>]</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> a+b+c</div><div class="line">&#125;</div><div class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>,<span class="number">2</span>];</div><div class="line"><span class="keyword">let</span> arrSum = sum(arr); <span class="comment">// 6</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 예2)</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">[a,b,c=<span class="number">3</span>] = [<span class="number">1</span>,<span class="number">2</span>]</span>)</span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(a+b+c);</div><div class="line">    <span class="keyword">return</span> a+b+c;</div><div class="line">&#125;</div><div class="line">sum(<span class="literal">undefined</span>); <span class="comment">// 6</span></div><div class="line">sum(); <span class="comment">// 6</span></div></pre></td></tr></table></figure>
+<h3 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h3><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=10087062" target="_blank" rel="external">ECMAScript 6 길들이기</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#es6이전의-배열-및-객체의-해체-할당&quot;&gt;ES6이전의 배열 및 객체의 해체 할당&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#배열-해체-할당&quot;&gt;배열 해체 할당&lt;/a&gt;&lt;ul&gt;
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="ES6" scheme="https://thefeeling.github.com/categories/javascript/es6/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[Hexo] - 설치 및 기본사용 방법</title>
+    <link href="https://thefeeling.github.com/2016/10/25/JavaScript-Hexo-hexo-%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5-%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC/"/>
+    <id>https://thefeeling.github.com/2016/10/25/JavaScript-Hexo-hexo-설치-기본사용/</id>
+    <published>2016-10-25T06:01:27.000Z</published>
+    <updated>2016-10-26T08:22:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>요즘(?) 유행하고 있는 정적 페이지 생성 프레임워크이다. Jekyll과 비슷한 녀석으로 정적 페이지로 블로그 운영에 많이 사용하고 있는거 같다. 기존에 운영하고 있는 티스토리 블로그도 좋았지만, 마크다운 지원이 빈약하기도하고 글 작성할때 뭔가 불편한 부분이 있어서 이것저것 개선할려고 툴을 많이 찾아봤지만 뭔가 조금씩은 모자란 느낌이었다. 그래서 나도 정적페이지로 블로그 운영을 해보고 괜찮다고하면 도메인까지 구매하여 달아놓을 생각이다.</p>
+<h3 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h3><p><img src="http://i.imgur.com/4cQ6K9r.png" alt="스크린샷 2016-10-26 오후 4.13.51"></p>
+<ul>
+<li><a href="https://hexo.io" target="_blank" rel="external">Hexo</a></li>
+</ul>
+<p>위 사이트에 접속하면 문서 및 API에 대하여 간단하게 확인이 가능하다. [Docs]에 들어가보면 간단하게 설치 방법과 사전 설치 요소에 대하여 명시하고 있다. 기본적으로 Node환경과 Git이 설치가 되어 있어야 한다. 나 같은 경우에는 Node 6.X 버젼대로 기존에 설치해놨고 Git 역시 설치가 되어 있기 때문에 바로 npm관련 모듈 설치로 넘어갔다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hexo-cli 설치</span></div><div class="line">$ npm install -g hexo-cli</div></pre></td></tr></table></figure>
+<p>설치는 너무 간단하다. 간단해서 이후 과정도 간단한줄 알았는데 결과적으로 간단하지는 않았다</p>
+<h3 id="기본-사용-방법"><a href="#기본-사용-방법" class="headerlink" title="기본 사용 방법"></a>기본 사용 방법</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Hexo Init</span></div><div class="line">$ hexo init &lt;folder&gt;</div><div class="line"><span class="comment"># 폴더 이동</span></div><div class="line">$ <span class="built_in">cd</span> &lt;folder&gt;</div><div class="line"><span class="comment"># 의존 모듈 설치</span></div><div class="line">$ npm install</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[폴더 구조]</div><div class="line">├── _config.yml</div><div class="line">├── package.json</div><div class="line">├── scaffolds</div><div class="line">├── source</div><div class="line">|   ├── _drafts</div><div class="line">|   └── _posts</div><div class="line">└── themes</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 정적 페이지 생성</span></div><div class="line">hexo generate</div><div class="line"><span class="comment"># 정적 페이지 생성 후 배포</span></div><div class="line">hexo generate <span class="_">-d</span></div><div class="line"></div><div class="line"><span class="comment"># 배포</span></div><div class="line">hexo deploy</div><div class="line"></div><div class="line"><span class="comment"># 기존에 생성해놓은 public / db.json 삭제</span></div><div class="line">hexo clean</div><div class="line"></div><div class="line"><span class="comment"># 로컬 서버 On</span></div><div class="line">hexo server</div><div class="line">hexo s</div><div class="line"></div><div class="line"><span class="comment"># 레이아웃으로 포스팅 생성</span></div><div class="line">hexo new [레이아웃] <span class="string">"포스트 이름"</span></div><div class="line"></div><div class="line"><span class="comment"># 드레프트(초안) 작성 후 포스트로 이동</span></div><div class="line">hexo publish</div></pre></td></tr></table></figure>
+<p><a href="https://hexo.io/docs/commands.html" target="_blank" rel="external">커맨드 명령어</a>를 통하여 기본적인 구조 생성 및 포스트 생성이 가능하다. 기본적인 사용방법 숙지 후 확인해야 할 부분이 <em><a href="https://hexo.io/docs/configuration.html" target="_blank" rel="external">_config.yml</a></em> 파일이다.</p>
+<p>설정 파일을 통하여 블로그 이름, 날짜 형식, 테마 등을 지정할 수 있으며 .yml파일 형식이라서 어렵지 않게 값들을 변경할 수 있다. 설정 파일 프로퍼티에 대하여 자세히 알고 싶으면 <a href="https://hexo.io/docs/configuration.html" target="_blank" rel="external">링크</a>를 통하여 들어가서 확인하면 된다. 어렵지 않다.</p>
+<h3 id="테마-설치"><a href="#테마-설치" class="headerlink" title="테마 설치"></a>테마 설치</h3><p><img src="http://i.imgur.com/XVtPMAs.png" alt="스크린샷 2016-10-26 오후 4.35.09"></p>
+<p>위 그림과 같은 기본 폴더 구조에서 themes/[다운로드 받은 테마] 로 넣어주면 된다. 테마가 좋은게 그렇게 많아 보이진 않지만, 기본 기능에 충실하면서 디자인이 깔끔한 <a href="https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak" target="_blank" rel="external">Tranquilpeak</a> 을 선택했다. 테마 설치 후 테마 관련된 설정은 테마 폴더 내 존재하는 <em>_config.yml</em> 을 통하여 추가 설정을 진행하면 된다.</p>
+<h3 id="플러그인-및-에드온-기능-활용"><a href="#플러그인-및-에드온-기능-활용" class="headerlink" title="플러그인 및 에드온 기능 활용"></a>플러그인 및 에드온 기능 활용</h3><p>구글 애널리스틱, 디스쿼스, 검색 기능을 추가로 붙여서 진짜 블로그처럼 활용이 가능하다. 나 같은 경우에는 디스쿼스 정도만 간단하게 붙여서 게시물의 댓글 기능을 활성화 시켜놓았다. 디스쿼스 설정 역시 <em>_config.yml</em> 에 shortname만 지정하면 되기 때문에 아주 간단하다.</p>
+<ul>
+<li><a href="https://disqus.com/home/" target="_blank" rel="external">disqus</a></li>
+</ul>
+<h3 id="간단한-사용-후기"><a href="#간단한-사용-후기" class="headerlink" title="간단한 사용 후기"></a>간단한 사용 후기</h3><p>아직 설치하고 사용한지 3일 정도 지난거 같은데, 디자인쪽에는 무뇌라서 그런지 테마 선택이 쫌 어려웠고 오픈소스 테마에 의존하다보니 버그도 쫌 있는거 같다. 뭐 필요한 부분은 수정해서 할 수 있어서 자유도가 높고 편리한 부분도 분명하게 존재하는거 같다. 좀 더 익숙하게 사용할 수 있고 이것저것 수정할 자신감이 높아지면 그때 이것저것 내용 공유를 많이 해야겠다.</p>
+<h3 id="참고자료"><a href="#참고자료" class="headerlink" title="참고자료"></a>참고자료</h3><ul>
+<li><a href="https://hexo.io" target="_blank" rel="external">Hexo.io</a></li>
+<li><a href="http://blog.lattecom.xyz/" target="_blank" rel="external">라떼님 Hexo 설치 관련 포스팅</a></li>
+<li><a href="http://futurecreator.github.io/2016/06/21/add-github-card-to-hexo/" target="_blank" rel="external">에릭한님 Hexo 관련 포스팅</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;요즘(?) 유행하고 있는 정적 페이지 생성 프레임워크이다. Jekyll과 비슷한 녀석으로 정적 페이지로 블로그 운영에 많이 사용하고 있는거 같다. 기존에 운영하고 있는 티스토리 블로그도 좋았지만, 마크다운 지원이 빈약하기도하고 글 작성할때 뭔가 
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+      <category term="Blog" scheme="https://thefeeling.github.com/tags/blog/"/>
+    
+      <category term="Hexo" scheme="https://thefeeling.github.com/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[ES6] - Default Parameter / Spread Operator / Rest Parameter</title>
+    <link href="https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-default-parameter-spread-operator-rest-parameter/"/>
+    <id>https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-default-parameter-spread-operator-rest-parameter/</id>
+    <published>2016-10-24T11:09:55.000Z</published>
+    <updated>2016-10-27T08:47:24.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 -->
+<ul>
+<li><a href="#default-parameter-디폴트-파라미터">Default Parameter : 디폴트 파라미터</a></li>
+<li><a href="#spread-operator-펼침-연산자">Spread Operator : 펼침 연산자</a></li>
+<li><a href="#rest-parameter-나머지-파라미터">Rest Parameter : 나머지 파라미터</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<h3 id="Default-Parameter-디폴트-파라미터"><a href="#Default-Parameter-디폴트-파라미터" class="headerlink" title="Default Parameter : 디폴트 파라미터"></a>Default Parameter : 디폴트 파라미터</h3><p>거창하게 디폴트 파라메터라고 하는데, 별건 없고 함수에서 파라미터/인자 값에 대하여 기본값을 지정하는 ES6 구현 내용이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printFriendsName</span>(<span class="params">a,b</span>)</span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"친구 1 : "</span> + a);</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"친구 2 : "</span> + b);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>친구 이름을 출력하는 함수를 가지고 설명을 간단하게 할 수 있을꺼 같다. 이런 함수가 있다면 일반적으로 인자 값에 대하여 기본 값을 지정하기 위해서는 이런 코딩을 주로 해왔을꺼 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printFriendsName</span>(<span class="params">a,b</span>)</span>&#123;</div><div class="line">	a = (a === <span class="literal">undefined</span>) ? <span class="string">"내가 친구가 없다니!!!!"</span> : a;</div><div class="line">	b = (b === <span class="literal">undefined</span>) ? <span class="string">"내가 진짜 없는거야?????"</span> : b;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"출력을 해보자! :  "</span> + a + <span class="string">" "</span> + b);</div><div class="line">&#125;</div><div class="line">printFriendsName();</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">출력을 해보자! :  내가 친구가 없다니!!!! 내가 진짜 없는거야?????</div></pre></td></tr></table></figure>
+<p>문자열을 넘기기 때문에 간단하게 보이지만, 만약 인자에서 객체나 다른 복잡한 프로퍼티를 받는 상황이라면 상황은 좀 더 복잡할 수 있을 것이다.</p>
+<p>ES6에서는 이런 코드를 간단하게 줄이고자 엔진 자체에서 파라미터/인자에 기본 값을 할당할 수 있도록 구현할 수 있는 문법을 추가했다. 그것이 바로 <strong>디폴트 파라미터</strong>라 불리는 녀석이다. 그렇다면 위 코드에 디폴트 파라미터를 지정하여 바꿔보도록 하자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printFriendsName</span>(<span class="params"></span></span></div><div class="line">	a = <span class="string">"내가 친구가 없다니!!!!"</span>,</div><div class="line">	b = <span class="string">"내가 진짜 없는거야?????"</span>)&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"출력을 해보자! :  "</span> + a + <span class="string">" "</span> + b);</div><div class="line">&#125;</div><div class="line">printFriendsName();</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">출력을 해보자! :  내가 친구가 없다니!!!! 내가 진짜 없는거야?????</div></pre></td></tr></table></figure>
+<p>출력 결과도 동일하고 코드가 한결 간단해졌다. 결정적으로 인자 정합성에 대한 코드가 빠졌기 때문에 로직도 한결 간단해보인다.</p>
+<p>기본 타입의 값뿐만 아니라, 참조 타입의 디폴트 파라미터 지정도 가능하다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">referencesTypeDefaultParameterTest</span>(<span class="params"></span></span></div><div class="line">	a = &#123;&#125;,</div><div class="line">	b = [],</div><div class="line">	c = function()&#123;&#125;)&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"참조 타입도 사용이 가능해요"</span>)</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"인자 타입 체크 : "</span> + <span class="keyword">typeof</span> a);</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"인자 타입 체크 : "</span> + <span class="keyword">typeof</span> b);</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"인자 타입 체크 : "</span> + <span class="keyword">typeof</span> c);</div><div class="line">&#125;</div><div class="line"></div><div class="line">referencesTypeDefaultParameterTest();</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">expressionDefaultParameterTest</span>(<span class="params"></span></span></div><div class="line">	a = <span class="number">1</span>+<span class="number">2</span>+<span class="number">3</span>)&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"표현식 사용이 가능해요."</span>)</div><div class="line">	<span class="built_in">console</span>.log(a);</div><div class="line">&#125;</div><div class="line"></div><div class="line">expressionDefaultParameterTest();</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">객체 타입도 사용이 가능해요</div><div class="line">인자 타입 체크 : object</div><div class="line">인자 타입 체크 : object</div><div class="line">인자 타입 체크 : function</div><div class="line">표현식도 사용이 가능해요.</div><div class="line">6</div></pre></td></tr></table></figure>
+<h3 id="Spread-Operator-펼침-연산자"><a href="#Spread-Operator-펼침-연산자" class="headerlink" title="Spread Operator : 펼침 연산자"></a>Spread Operator : 펼침 연산자</h3><p><strong>…</strong> 으로 포기되며 객체 순회가 가능한 객체를 개별 인자나 값으로 나누는 구문 요소가 추가되었다.<br>펼침 연산자는 함수의 파라미터 혹은 인자가 여러개 필요한 곳에서 사용이 가능하다.(배열이 대표적임)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">spreadArrTestFunc</span>(<span class="params">a,b</span>)</span>&#123;</div><div class="line">	<span class="keyword">return</span> a+b;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(spreadArrTestFunc(...[<span class="number">1</span>,<span class="number">2</span>]));</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">3</div></pre></td></tr></table></figure>
+<p>엔진 내부적으로는 …[1,2]를 … 연산자가 붙으면 1,2로 치환하고 이를 함수 호출 시 인자로 넘기는 것이다. 이는 이터러블 규약으로 ES6에 정해진 일종의 PROTOCOL이라고 한다.</p>
+<p>값이 여러개 사용되는 배열같은 곳에서도 활용이 될 수 있는데, 사용할 수 있는 경우를 여러개로 나눠서 간단하게 샘플 코드를 짜봤다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>,<span class="number">2</span>];</div><div class="line"><span class="keyword">let</span> arr2 = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">let</span> arr3 = [...arr1, ...arr2];</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(arr3);</div><div class="line"></div><div class="line"><span class="keyword">let</span> arr4 = [<span class="number">1</span>,<span class="number">2</span>];</div><div class="line"><span class="keyword">let</span> arr5 = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"></div><div class="line">arr4.push(...arr5);</div><div class="line"><span class="built_in">console</span>.log(arr4);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">[ 1, 2, 3, 4, 5 ]</div><div class="line">[ 1, 2, 3, 4, 5 ]</div></pre></td></tr></table></figure>
+<p>여러 개의 값을 가지고 있는 배열을 펼치기 연산을 통하여 통합하거나 배열의 끝자리에 붙이는게 상당히 간편한 것을 확인할 수 있다.</p>
+<h3 id="Rest-Parameter-나머지-파라미터"><a href="#Rest-Parameter-나머지-파라미터" class="headerlink" title="Rest Parameter : 나머지 파라미터"></a>Rest Parameter : 나머지 파라미터</h3><p>말 그대로 나머지 파라미터로 함수에서 사용되며 함수 인자/파라미터 마지막에 “…”을 붙여서 가변적으로 넘어올 수 있는 함수 인자/파라미터를 배열로 바인딩할 수 있다.<br>물론 argument를 활용하면 비슷한 기능을 흉내낼 수 있겠지만 argument 같은 경우에는 정확하게 배열이 아닌 유사배열이기 때문에 어느 정도 차이가 존재한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printNumbers</span>(<span class="params">a,b,...nums</span>)</span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="built_in">Array</span>.isArray(nums));</div><div class="line">	<span class="built_in">console</span>.log(a,b,nums);</div><div class="line">&#125;</div><div class="line">printNumbers(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line">true</div><div class="line">1 2 [ 3, 4, 5, 6, 7, 8, 9 ]</div></pre></td></tr></table></figure>
+<p>넘어온 나머지 파라미터의 타입이 배열임을 확인하고 값을 출력하는 간단한 함수를 만든 결과이다.</p>
+<h3 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h3><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=10087062" target="_blank" rel="external">ECMAScript 6 길들이기</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#default-parameter-디폴트-파라미터&quot;&gt;Default Parameter : 디폴트 파라미터&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#spread-operato
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="ES6" scheme="https://thefeeling.github.com/categories/javascript/es6/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[ES6] - let/const</title>
+    <link href="https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/"/>
+    <id>https://thefeeling.github.com/2016/10/24/JavaScript-ES6-es6-let-const/</id>
+    <published>2016-10-24T11:03:44.000Z</published>
+    <updated>2016-10-26T11:23:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<!-- toc orderedList:0 -->
+<ul>
+<li><a href="#let-키워드-사용-블록-스코프-변수-생성">let 키워드 사용 : 블록 스코프 변수 생성</a></li>
+<li><a href="#const-상수-생성">const 상수 생성</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+<!-- tocstop -->
+<h3 id="let-키워드-사용-블록-스코프-변수-생성"><a href="#let-키워드-사용-블록-스코프-변수-생성" class="headerlink" title="let 키워드 사용 : 블록 스코프 변수 생성"></a>let 키워드 사용 : 블록 스코프 변수 생성</h3><p>자바스크립트 기본적으로 함수 단위의 스코프를 제공하고 있는데, 다른 언어들과는 다른 부분이기 때문에 이러한 특징을 잘 알고 있지 않으면 코드 작성에 어려움을 겪거나 메모리 누수를 낳는 코드를 만들 가능성이 높다.<br>ES6에서는 이러한 다른 언어들의 특성을 받아들여 블록 단위의 변수 선언을 할 수 있는 let 키워드가 추가가 되었다.기존 컴파일 언어나 다른 언어를 쓰던 개발자들도 이제 쉽게 블록 단위의 변수 선언을 통하여 햇갈리지 않는 개발이 가능하다.</p>
+<p><em>var 키워드가 표준에서 빠지는 건 아니기 때문에, 새로 추가된 let 키워드의 스코프 특성에 대해 잘 알고 있어야 한다.</em></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printNumberZ</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(a);</div><div class="line">	<span class="keyword">var</span> a = <span class="number">2</span>;</div><div class="line">&#125;</div><div class="line">printNumber();</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">1</div><div class="line">2</div></pre></td></tr></table></figure>
+<p>위와 같은 코드가 있다고 할때, 출력 결과를 생각해보면 자바스크립트 변수 특징에 대해 원래 잘 알고 있는 개발자라면 쉽게 대답할 수 있는 결과가 출력이 될 것이다.<br>기본 var 변수로 선언하면 함수 단위의 스코프로 생성되기 때문에, 자신의 스코프에 있는 함수를 먼저 참조하게 된다. 그래서 출력 결과가 같은 스코프에 있는 변수를 바라보게 되는 것이다.</p>
+<p>let 키워드를 사용한 샘플 코드를 작성해봤는데 간단하게 결과를 예측해봐도 재밌을꺼 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printLetVariable</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line">	<span class="built_in">console</span>.log(a);</div><div class="line">&#125;</div><div class="line">printLetVariable();</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">10</div><div class="line">20</div><div class="line">10</div></pre></td></tr></table></figure>
+<p>출력 결과를 살펴보니, let도 역시 같은 스코프에 있는 변수를 참고 하는 것을 기본으로 하고 있다.<br>그렇다면 코드를 살짝 틀어서 중복으로 선언했을 경우를 생각해보자. 먼저 var 변수 선언의 경우를 보고 그 다음에 let 변수 선언에 대해 테스트 코드를 작성해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">var</span> a = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">20</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">SyntaxError: Identifier &apos;a&apos; has already been declared</div></pre></td></tr></table></figure>
+<p>Node.js 6.x 버젼에서 테스트를 해봤는데 위와 같은 결과가 리턴되었다. 변수 특성에 대한 결과를 정리해보자.</p>
+<ul>
+<li>let 변수는 같은 스코프에 있을 경우 중복으로 선언하면 TypeError 예외를 발생시킨다.</li>
+<li>var 변수의 경우 중복 선언 허용</li>
+<li>만약, 스코프가 다르다면 같은 변수명을 선언해도 문제가 없으며 참조 시 같은 스코프에 있는 변수를 참조하게 된다.</li>
+<li>var/let 을 조합한다고 해도, 같은 스코프에 저장되는 변수기 때문에 중복 선언이 안된다.</li>
+</ul>
+<blockquote>
+<p>흠 하위 호환성을 생각하면 var 변수를 써야 할꺼 같은데, 만약 개발하는 환경이 ES6 코드가 정상적으로 굴러갈 수 있는 환경이라면 적극적으로 let 키워드를 통하여 변수를 선언하는 것이 유리할꺼 같다.</p>
+</blockquote>
+<h3 id="const-상수-생성"><a href="#const-상수-생성" class="headerlink" title="const 상수 생성"></a>const 상수 생성</h3><p>C,C++,Java 같은 언어에는 상수를 저장할 수 있는 문법적인 요소를 지원하고 있는데 자바스크립트를 그런 부분에 대한 지원이 전혀 없었다. 그래서 대부분 코드 컨벤션을 대문자로 잡거나 하는 방법으로 나름대로 상수를 식별하는 경우를 많이 봤었다.</p>
+<p>var 변수의 경우 스코프의 변수 변경이 가능하다는 점 때문에 기존 코드에서는 상수 운영 시 변경에 대한 위험이 있었다고 할 수 있겠다.<br>ES6에서는 이런 상수에 대한 문법적인 지원을 포함하였는데, 그것이 바로 const 키워드이다.</p>
+<p>쉽게 생각하여 읽기 전용 변수라고 보면 좋을꺼 같은데, 앞서 let 변수 선언의 특징을 설명했었는데 const는 이런 let 변수의 성격에 변경이 불가능한 ‘읽기전용’이라는 성격이 들어간다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ABS = <span class="number">10</span>;</div><div class="line">ABS = <span class="number">20</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line"><span class="built_in">TypeError</span>: Assignment to constant variable.</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ABS = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(ABS);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printAbs</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="keyword">const</span> ABS = <span class="number">20</span>;</div><div class="line">	<span class="built_in">console</span>.log(ABS);</div><div class="line">&#125;</div><div class="line">printAbs();</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[출력 결과]</div><div class="line"><span class="number">10</span></div><div class="line"><span class="number">20</span></div></pre></td></tr></table></figure>
+<p>읽기 전용 변수의 성격이라서 값을 다시 할당하는 것은 불가능하다.<br>그리고 let 변수의 성격처럼 블록 단위의 스코프를 지원하기 때문에 같은 변수명을 사용하더라도 스코프가 다르면 사용이 가능하다.</p>
+<p>앞에서 let/const 의 간단한 성격을 설명했는데, 값을 직접 할당하는 방식으로 사용했기 때문에 실제로 코드를 작성할때 참조 타입의 데이터(객체,함수,배열)이 들어갔을 경우에 어떻게 되는지 궁금할 수 있다.<br>기본적으로 참조 타입은 데이터의 주소 값을 저장하는 점을 잘 기억하면 좋을꺼 같다.</p>
+<blockquote>
+<p>다른 언어들도 거의 비슷하기 때문에, 경험 많은 분들이면 쉽게 이해할 수 있을꺼 같아요.</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> arr = [<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>];</div><div class="line">arr[<span class="number">0</span>] = <span class="number">100</span>;</div><div class="line"><span class="built_in">console</span>.log(arr);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[출력결과]</div><div class="line">[ 100, 20, 30, 40 ]</div></pre></td></tr></table></figure>
+<p>const는 읽기 전용이라고 했는데, 왜 변경이 되는지 잘 생각해보면 쉽게 답이 나온다. 실제로 arr의 참조 값을 바꾸는 것이 아니기 때문에 해당 참조 타입의 데이터의 인덱스/프로퍼티를 수정하더라도 기존 참조 타입의 데이터를 사용하듯이 추가/변경이 가능 한 것이다.</p>
+<blockquote>
+<p>쫌 어려운 말로 const 변수가 객체 타입이더라도, 객체 자체는 가변(mutable) 상태인 것이다. 다른 언어들에서는 Mutable / Immutable 상태에 따른 변수를 선언하는 방식도 사용하고 있고 변경이 가능하냐 불가능하냐고 중요한 부분이기 때문에 해당 키워드를 검색해보는 것도 좋은 공부가 될꺼 같다.</p>
+</blockquote>
+<p>예제는 물론 배열로 선언했지만 객체 역시도 동일하게 적용된다. 사용해야 할 목적과 이유는 분명한거 같다. 객체 자체의 변경이 없어야 할 경우 const 변수와 참조 타입을 적절하게 조합하여 사용하면 기존 var 변수로 선언했던 방식보다 좀 더 수월하게 개발이 가능한 것이다.</p>
+<h3 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h3><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=10087062" target="_blank" rel="external">ECMAScript 6 길들이기</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- toc orderedList:0 --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#let-키워드-사용-블록-스코프-변수-생성&quot;&gt;let 키워드 사용 : 블록 스코프 변수 생성&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#const-상수-생성&quot;&gt;const 상
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/categories/javascript/"/>
+    
+      <category term="ES6" scheme="https://thefeeling.github.com/categories/javascript/es6/"/>
+    
+    
+      <category term="JavaScript" scheme="https://thefeeling.github.com/tags/javascript/"/>
+    
+  </entry>
+  
+</feed>

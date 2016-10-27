@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="DevBlog, D.Choi">
+    <title>[Node.Js] - Express.Js 기본 개념 및 사용 방법 - DevBlog, D.Choi</title>
+    <meta name="author" content="D.Choi">
+    <meta name="description" content="DevBlog, D.Choi">
+    <link rel="icon" href="/assets/images/null">
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="atom.xml">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="https://thefeeling.github.com">DevBlog, D.Choi</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="/assets/images/developer.png"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="/assets/images/developer.png"/>
+            
+        </a>
+        <span class="sidebar-profile-name">D.Choi</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-categories">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-tags">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-archives">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs" href="/#search">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/#about">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/atom.xml">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">[Node.Js] - Express.Js 기본 개념 및 사용 방법</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Oct 27 2016 17:27:27 GMT+0900">
+        Oct 27, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">JavaScript</a>, <a class="category-link" href="/categories/javascript/nodejs/">NodeJs</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <!-- toc orderedList:0 -->
+<ul>
+<li><a href="#Express-js">Express.js</a><ul>
+<li><a href="#설치">설치</a></li>
+<li><a href="#Express-Generator">Express Generator</a></li>
+<li><a href="#기본-라우팅-및-핸들러">기본 라우팅 및 핸들러</a><ul>
+<li><a href="#라우팅-형태">라우팅 형태</a></li>
+</ul>
+</li>
+<li><a href="#미들웨어">미들웨어</a></li>
+<li><a href="#요청-및-응답">요청 및 응답</a><ul>
+<li><a href="#Express-어플리케이션-처리-흐름"><strong>Express 어플리케이션 처리 흐름</strong></a></li>
+<li><a href="#요청-프로퍼티-및-매소드">요청 프로퍼티 및 매소드</a></li>
+<li><a href="#응답-프로퍼티-및-매소드">응답 프로퍼티 및 매소드</a></li>
+</ul>
+</li>
+<li><a href="#template-engine">Template Engine</a></li>
+<li><a href="#참고">참고</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+<h1 id="Express-js"><a href="#Express-js" class="headerlink" title="Express.js"></a>Express.js</h1><p>HTTP 요청에 대하여 <strong>라우팅</strong> 및 <strong>미들웨어</strong> 기능을 제공하는 웹 프레임워크</p>
+<ul>
+<li><p><strong>라우팅(routing)</strong> 은 기본적으로 어플리케이션 서버에서 경로를 제어하는 목적</p>
+<blockquote>
+<p>목적지까지 갈 수 있는 여러 경로 중 한 가지 경로를 설정해 주는 과정.</p>
+</blockquote>
+</li>
+<li><p><strong>미들웨어(middleware)</strong> 는 중간에 껴넣는다는 의미로 부가적인 기능이나 처리를 제공하는 목적</p>
+<blockquote>
+<p>이기종의 환경을 연결해주는 소프트웨어를 가리킴</p>
+</blockquote>
+<p>▶ Express.js에서 사용할 수 있는 <strong>중간처리</strong> 목적의 소프트웨어/모듈</p>
+<p>▶ 최종 요청 핸들러 이전의 <strong>Express 라우팅 계층에 의해 호출되는 함수</strong></p>
+</li>
+</ul>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm init</div><div class="line">npm install express --save</div></pre></td></tr></table></figure>
+<h2 id="Express-Generator"><a href="#Express-Generator" class="headerlink" title="Express Generator"></a>Express Generator</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install express-generator -g</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">express -h</div></pre></td></tr></table></figure>
+<p><img src="http://i.imgur.com/8b7CLJe.png" alt="express_generator"></p>
+<ul>
+<li><strong>기본적인 어플리케이션 골격 생성</strong></li>
+<li>handlebars, hogan, jade 등 템플릿 엔진 추가 가능</li>
+<li>css, .gitignore 등 옵션 추가 가능</li>
+</ul>
+<h2 id="기본-라우팅-및-핸들러"><a href="#기본-라우팅-및-핸들러" class="headerlink" title="기본 라우팅 및 핸들러"></a>기본 라우팅 및 핸들러</h2><p>라우팅(Routing) 이란 URL(URI) 요청에 따라 어플리케이션이 응답하는 방법을 결정.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * METHOD : Http Method(GET, POST, PUT, DELETE, PATCH 등)</div><div class="line"> * PATH : [경로]</div><div class="line"> * HANDLER : [경로 접근 시, 처리 핸들러]</div><div class="line"> */</div><div class="line">app.METHOD(PATH, HANDLER)</div></pre></td></tr></table></figure>
+<h3 id="라우팅-형태"><a href="#라우팅-형태" class="headerlink" title="라우팅 형태"></a>라우팅 형태</h3><p>라우팅 URL 패스는 기본적으로 문자열뿐만 아니라 문자열 패턴 혹은 정규식으로 표현이 가능하다.(path-to-regexp)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Sample</span></div><div class="line">app.get(<span class="string">'/home'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</div><div class="line">      res.send(<span class="string">"Hello World"</span>);</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">// abcd, abbcd 및 abbbcd</span></div><div class="line">app.get(<span class="string">'/ab+cd'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab+cd'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// abcd, abxcd, abRABDOMcd</span></div><div class="line">app.get(<span class="string">'/ab*cd'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab*cd'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// abe 및 abcde</span></div><div class="line">app.get(<span class="string">'/ab(cd)?e'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'ab(cd)?e'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>라우팅 핸들러(콜백 함수)는 하나 이상으로 설정이 가능하다.(next 인자를 반드시 설정해야 한다.) 라우팅에 대한 핸들링을 2개 이상을 등록하여 사용할 수 있기 때문에 굳이 하나의 핸들러에 모든 로직이나 코드를 넣어서 처리할 이유가 전혀 없다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> cb0 = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'CB0'</span>);</div><div class="line">      next();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cb1 = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'CB1'</span>);</div><div class="line">      next();</div><div class="line">&#125;</div><div class="line"></div><div class="line">app.get(<span class="string">'/example/a'</span>, [cb0, cb1], <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'the response will be sent by the next function ...'</span>);</div><div class="line">      next();</div><div class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'Hello from A!'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.get(<span class="string">'/example/b'</span>,</div><div class="line"><span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'first handler'</span>);</div><div class="line">      next();</div><div class="line">&#125;,</div><div class="line"><span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'second handler'</span>);</div><div class="line">      res.send(<span class="string">'Hello from B!'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>모듈식으로 등록하는 개념으로 express.Router 매소드를 활용하여 파일 단위로 모듈화를 시켜서 라우팅을 등록할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// [birds.js]</span></div><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> router = express.Router();</div><div class="line"></div><div class="line"><span class="comment">// middleware that is specific to this router</span></div><div class="line">router.use(<span class="function"><span class="keyword">function</span> <span class="title">timeLog</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'Time: '</span>, <span class="built_in">Date</span>.now());</div><div class="line">      next();</div><div class="line">&#125;);</div><div class="line"><span class="comment">// define the home page route</span></div><div class="line">router.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'Birds home page'</span>);</div><div class="line">&#125;);</div><div class="line"><span class="comment">// define the about route</span></div><div class="line">router.get(<span class="string">'/about'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.send(<span class="string">'About birds'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = router;</div></pre></td></tr></table></figure>
+<p>위에서 작성된 bird.js을 하단과 같이 로드하면 /birds/, /birds/about 으로 라우팅이 등록되어 사용할 수 있다. 모듈 단위(파일)로 작성하여 등록하는 방식이기 때문에, 라우팅 관리가 편하며 추후에 라우팅을 추가한다고 해도 확장성이 있어 보인다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> birds = <span class="built_in">require</span>(<span class="string">'./birds'</span>);</div><div class="line">app.use(<span class="string">'/birds'</span>, birds);</div></pre></td></tr></table></figure></p>
+<h2 id="미들웨어"><a href="#미들웨어" class="headerlink" title="미들웨어"></a>미들웨어</h2><ul>
+<li><strong>Application</strong><ul>
+<li><strong>어플리케이션 전체 영역</strong> 에서 처리 가능. 앱에 대한 Request가 발생할 떄 마다 실행</li>
+</ul>
+</li>
+<li><p><strong>Router</strong></p>
+<ul>
+<li><p><strong>라우터 단위</strong> 로 Request가 발생하면 실행</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"><span class="keyword">var</span> router = express.Router();</div><div class="line"></div><div class="line">router.use(<span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'Time:'</span>, <span class="built_in">Date</span>.now());</div><div class="line">      next();</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>위에서 설명했던 라우팅 방식 중 모듈 단위(파일) 라우팅 시 사용하면 유용</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p><strong>Error Handling</strong></p>
+<ul>
+<li>기본적으로 4개의 인자가 필요(인자의 숫자로 오류 처리 미들웨어 판별)  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">      app.use(<span class="function"><span class="keyword">function</span>(<span class="params">err, req, res, next</span>) </span>&#123;</div><div class="line">            <span class="built_in">console</span>.error(err.stack);</div><div class="line">            res.status(<span class="number">500</span>).send(<span class="string">'Something broke!'</span>);</div><div class="line">      &#125;);</div><div class="line">      <span class="string">``</span><span class="string">`  </span></div><div class="line">- **Basic(Default)**</div><div class="line">  - express.static(root, [options])</div><div class="line">     - 어플리케이션 정적 자원 설정(CSS,HTML,JS) 등</div><div class="line">     - 2개 이상의 정적 디렉토리 설정 가능</div><div class="line">      `<span class="string">``</span>javascript</div><div class="line">      <span class="keyword">var</span> options = &#123;</div><div class="line">        <span class="attr">dotfiles</span>: <span class="string">'ignore'</span>,</div><div class="line">        <span class="attr">etag</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">extensions</span>: [<span class="string">'htm'</span>, <span class="string">'html'</span>],</div><div class="line">        <span class="attr">index</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">maxAge</span>: <span class="string">'1d'</span>,</div><div class="line">        <span class="attr">redirect</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">setHeaders</span>: <span class="function"><span class="keyword">function</span> (<span class="params">res, path, stat</span>) </span>&#123;</div><div class="line">          res.set(<span class="string">'x-timestamp'</span>, <span class="built_in">Date</span>.now());</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      app.use(express.static(<span class="string">'public'</span>));</div><div class="line">      app.use(express.static(<span class="string">'uploads'</span>));</div><div class="line">      app.use(express.static(<span class="string">'files'</span>));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>Third-Party</strong></p>
+<ul>
+<li>Application Level 및 Router Level에 서트파티 미들웨어 설정이 가능하다</li>
+<li><a href="http://expressjs.com/ko/resources/middleware.html" target="_blank" rel="external">대표적인 미들웨어 종류</a>를 참고하여 설정하자.</li>
+<li>Express의 경우, 초기버젼과 다르게 대부분 서드파티 미들웨어 사용을 권고하고 있다. 그렇기 때문에, 자주 사용하는 조합을 찾아놓고 사용하는 것이 개발 속도면에서나 안정성면에서나 유리하다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="요청-및-응답"><a href="#요청-및-응답" class="headerlink" title="요청 및 응답"></a>요청 및 응답</h2><h3 id="Express-어플리케이션-처리-흐름"><a href="#Express-어플리케이션-처리-흐름" class="headerlink" title="Express 어플리케이션 처리 흐름"></a><strong>Express 어플리케이션 처리 흐름</strong></h3><ul>
+<li>미들웨어를 선 처리</li>
+<li>개별 라우팅 주소 값에 맞는 라우팅 핸들러를 실행</li>
+<li>HTTP 요청에 대한 응답을 실행</li>
+</ul>
+<p><img src="http://i.imgur.com/oGUSkq8.png" alt="express-diagram"></p>
+<p>기본적으로, Request 및 Response는 객체이며 HTTP 요청과 응답과 관련된 매서드와 프로퍼티(상태값 등)을 가지고 있다. <strong>Query String, Parameter, Body, HTTP Header 기타 등등</strong> 심지어 xhr 요청 유무까지 확인 가능한 프로퍼티가 있다. 너무 많기에 관련된 내용은 하단 링크를 통하여 확인하도록 하자</p>
+<h3 id="요청-프로퍼티-및-매소드"><a href="#요청-프로퍼티-및-매소드" class="headerlink" title="요청 프로퍼티 및 매소드"></a>요청 프로퍼티 및 매소드</h3><ul>
+<li>링크 참고 (<a href="http://expressjs.com/ko/4x/api.html#req" target="_blank" rel="external">http://expressjs.com/ko/4x/api.html#req</a>)<h3 id="응답-프로퍼티-및-매소드"><a href="#응답-프로퍼티-및-매소드" class="headerlink" title="응답 프로퍼티 및 매소드"></a>응답 프로퍼티 및 매소드</h3></li>
+<li>링크 참고 (<a href="http://expressjs.com/ko/4x/api.html#res" target="_blank" rel="external">http://expressjs.com/ko/4x/api.html#res</a>)</li>
+</ul>
+<h2 id="Template-Engine"><a href="#Template-Engine" class="headerlink" title="Template Engine"></a>Template Engine</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Setting</span></div><div class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'jade'</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Router</span></div><div class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">      res.render(<span class="string">'main'</span>, &#123;<span class="attr">msg</span> : <span class="string">"HelloWorld!"</span>&#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>express에서 자주 사용하는 뷰 템플릿 엔진은 하단과 같다.</p>
+<ul>
+<li><a href="https://github.com/pugjs/pug" target="_blank" rel="external">jade(pug)</a></li>
+<li><a href="https://www.npmjs.com/package/ejs" target="_blank" rel="external">ejs</a></li>
+<li><a href="http://handlebarsjs.com/" target="_blank" rel="external">handlebars</a></li>
+</ul>
+<p>React같이 View만을 전문적으로 처리하는 라이브러리가 유행이고, 동형(Isomorphic) 처리라고 하여 서버 사이드에서도 클라이언트 사이드(브라우저)와 같이 뷰를 렌더링하자 라는 테마가 요즘 유행이다.(하지만 나에게는 너무 어렵다…어려워….) 마지막으로 배우고 익혔던 AngularJS도 좋지만 이 녀석은 사용해야 할 성격이 분명히 존재하는거 같다(SEO가 필요한 사이트에서는 쥐약인듯)</p>
+<p>아무튼 express에서 뷰 렌더링이 필요하다면 위 3개정도가 가장 현실적으로 사용할만한 템플릿 엔진인것은 분명하다. 만약 뷰단까지 같이 셋팅이 되어 있는 프로젝트가 필요하다면 <a href="http://yeoman.io/" target="_blank" rel="external">Yeoman</a>이나 <a href="http://megaboilerplate.com/" target="_blank" rel="external">Mega Boilerplate</a>에서 필요한 리소스를 확보하면 된다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a href="http://expressjs.com/" target="_blank" rel="external">Express.js</a></li>
+<li><a href="https://github.com/expressjs" target="_blank" rel="external">Express.js Github page</a></li>
+</ul>
+
+        
+            
+        
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">JavaScript</a> <a class="tag tag--primary tag--small t-link" href="/tags/nodejs/">NodeJs</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-prototype/"  data-tooltip="자바스크립트 프로토타입">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-object/" data-tooltip="[ES6] - Destructuring Assignment(해체할당) - 객체">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 D.Choi. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-prototype/"  data-tooltip="자바스크립트 프로토타입">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/26/JavaScript-ES6-es6-destructuring-assignment-object/" data-tooltip="[ES6] - Destructuring Assignment(해체할당) - 객체">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+                </div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/developer.png"/>
+        
+            <h4 id="about-card-name">D.Choi</h4>
+        
+            <h5 id="about-card-bio"><p>Do it easy, Do Continue!</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Developer</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/covernew.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'http-thefeeling-github-io';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

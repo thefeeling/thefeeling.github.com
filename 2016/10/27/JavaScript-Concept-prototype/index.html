@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="DevBlog, D.Choi">
+    <title>자바스크립트 프로토타입 - DevBlog, D.Choi</title>
+    <meta name="author" content="D.Choi">
+    <meta name="description" content="DevBlog, D.Choi">
+    <link rel="icon" href="/assets/images/null">
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="atom.xml">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="https://thefeeling.github.com">DevBlog, D.Choi</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="/assets/images/developer.png"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="/assets/images/developer.png"/>
+            
+        </a>
+        <span class="sidebar-profile-name">D.Choi</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-categories">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-tags">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-archives">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs" href="/#search">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/#about">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/atom.xml">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">자바스크립트 프로토타입</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Oct 27 2016 17:27:27 GMT+0900">
+        Oct 27, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/javascript/">JavaScript</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <h1 id="JavaScript-Prototype-amp-Prototype-Chainning"><a href="#JavaScript-Prototype-amp-Prototype-Chainning" class="headerlink" title="JavaScript_Prototype &amp; Prototype Chainning"></a>JavaScript_Prototype &amp; Prototype Chainning</h1><p>자바스크립트는 <strong>프로토타입</strong> 기반의 객체지향 언어로 일반적인 객체 지향 언어와 다른 특성을 가지고 있다.</p>
+<p>특히, 자바스크립트는 기본적으로는 원시타입과 참조타입으로 데이터 타입을 나눌 수 있지만, 엔진 내부에서는 원시타입 역시 객체로 <strong>오토박싱(AutoBoxing)</strong> 을 시켜서 객체형으로 변환하여 변수를 관리한다.(즉, 원시타입도 어떤 생성자 함수의 인스턴스이다.)</p>
+<h2 id="암묵적인-프로토타입-링크-implicit-prototype-link"><a href="#암묵적인-프로토타입-링크-implicit-prototype-link" class="headerlink" title="암묵적인 프로토타입 링크(implicit prototype link)"></a>암묵적인 프로토타입 링크(implicit prototype link)</h2><p>자바스크립트의 모든 객체는 프로토타입 (링크)객체를 가지고 있다. 프로토타입 객체란, 자신을 생성한 생성자 함수의 프로토타입 객체를 가리키는 일종의 링크 객체로 자바스크립트에서 상속을 구현하는 핵심 메카니즘이라고 할 수 있다.</p>
+<ul>
+<li>ECMA 표준에서는 이를 <strong>암묵적인 프로토타입 링크</strong> 라고 명칭한다.</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> foo = <span class="keyword">new</span> Person(<span class="string">'Choi'</span>);</div><div class="line"></div><div class="line">foo.__proto__ === Person.prototype</div></pre></td></tr></table></figure>
+<p>위 코드에서 foo 객체(인스턴스)의 프로토타입 링크는 foo 객체의 생성자인 Person 함수 객체의 <strong>[프로토타입]</strong> 영역을 가리키가 된다. 즉, 생성자 함수의 프로토타입 영역이 인스턴스의 프로토타입 링크가 가리키게 되는 객체가 되는 것이다.</p>
+<blockquote>
+<p>Chrome에서는 <em>proto</em> 라는 프로퍼티가 프로토타입 링크 역할을 하는 객체 프로퍼티가 된다.<br>즉, 숨겨진 프로토타입 링크 역할을 수행하게 되는 것이다.</p>
+</blockquote>
+<p>생성자 함수로 생성된 객체뿐만 아니라, 객체 리터럴도 프로토타입 링크를 가지게 되는데 왜냐하면 객체 리터럴 역시 내부적으로는 Object() 생성자 함수의 객체(인스턴스)이기 때문에, Object.Prototype 영역을 가리키는 암묵적인 프로토타입 링크를 가지게 된다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 객체 리터럴 생성</span></div><div class="line"><span class="keyword">var</span> obj = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 객체 리터럴도 Object 생성자 함수의 인스턴스이기 때문에 가리키는 프로토타입 링크와 프로토타입 영역은 동일한 객체를 바라보게 된다.</span></div><div class="line">obj.__proto__ === <span class="built_in">Object</span>.prototype</div></pre></td></tr></table></figure>
+<blockquote>
+<p>결과적으로, 기억해야 할 부분은 바로 <strong>객체리터럴 역시 Object() 생성자 함수의 인스턴스</strong> 라는 점이다.</p>
+</blockquote>
+<h2 id="프로토타입-체인-Prototype-Chainning"><a href="#프로토타입-체인-Prototype-Chainning" class="headerlink" title="프로토타입 체인(Prototype Chainning)"></a>프로토타입 체인(Prototype Chainning)</h2><p>자바스크립트에서 객체의 속성이나 매소드를 참조할 때, 객체에 해당 속성과 매소드가 없을 경우 <strong>프로토타입 링크</strong> 를 따라 프로토타입 객체의 프로퍼티를 차례대로 찾아가는 것을 <strong>프로토타입 체인</strong> 이라고 한다.</p>
+<blockquote>
+<p>객체의 속성을 읽거나 매소드를 호출(실행)할 때 프로토타입 체인이 작동한다</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myObj = &#123;&#125;;</div><div class="line">myObj.name = <span class="string">"Choi"</span>;</div><div class="line"></div><div class="line">myObj.hasOwnProperty(<span class="string">'name'</span>); <span class="comment">// true</span></div><div class="line">myObj.hasOwnProperty(<span class="string">'age'</span>); <span class="comment">// false</span></div></pre></td></tr></table></figure>
+<p>위 코드에서 hasOwnProperty() 매소드를 사용할 수 있는 근거도 위에서 말한대로 객체 리터럴 역시 Object() 생성자 함수의 인스턴스이기 때문에, 객체의 프로토타입 링크는 Object() 생성자 함수 객체의 프로토타입 영역을 참조하게 된다. 그래서 기존 Object() 생성자 함수의 프로토타입 영역에 정의되어 있는 매소드인 hasOwnProperty(Native 영역의 함수)를 사용할 수 있는 것이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype</div><div class="line"><span class="built_in">Number</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype</div></pre></td></tr></table></figure>
+<p>이 밖에도, Number, String, Function 등의 생성자 함수들도 각자 프로토타입 영역을 가지고 있는데 <strong>프로토타입 영역은 곧 객체</strong> 이기 때문에 객체의 프로토타입 링크를 가지고 있게 된다. 이때 프로토타입 링크가 바라보게 되는 곳이 바로 Object()의 프로토타입 영역이기 때문에 실질적으로 모든 객체(인스턴스)에서 Object.prototype에 정의한 매서드들을 사용할 수 있는 것이 된다.</p>
+<h2 id="프로토타입-amp-amp-this"><a href="#프로토타입-amp-amp-this" class="headerlink" title="프로토타입 &amp;&amp; this"></a>프로토타입 &amp;&amp; this</h2><p>프로토타입 객체의 속성(프로퍼티)가 매서드인 경우, 결과적으로 <strong>this 키워드는 매서드를 호출한 객체를 바라보게 된다.</strong> 말이 어려운데 아래 예제를 살펴보면 쉽게 이해할 수 있을 것이다.<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Animal</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Animal.prototype.sayHello = <span class="function"><span class="keyword">function</span>(<span class="params">msg</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> alert(<span class="keyword">this</span>.name + <span class="string">"이 말합니다. "</span> + msg);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> tiger = <span class="keyword">new</span> Animal(<span class="string">'타이거'</span>);</div><div class="line">tiger.sayHello(<span class="string">'난 호랭이야!'</span>); <span class="comment">// 타이거가 말합니다. 난 호랭이야!</span></div></pre></td></tr></table></figure></p>
+<p>sayHello를 호출한 객체는 바로 tiger 객체이기 때문에, sayHello 매서드 내부의 this 키워드가 가리키는 것은 바로 tiger 객체 자체를 참조하게 된다.(이것은 일종의 자바스크립트의 법칙과도 같다.) 즉, 호출한 객체의 자체를 바라보게 되는 것인데 살짝 예제를 틀어서보면 재밌는 부분을 발견할 수 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Animal.prototype.name = <span class="string">"강아지"</span>;</div><div class="line"><span class="comment">// 강아지가 말합니다. 난 강아지인데?!!!</span></div><div class="line">Animal.prototype.sayHello(<span class="string">'난 강아지인데?!!!'</span>);</div></pre></td></tr></table></figure>
+<p>첫 번쨰 예제와 두 번쨰 예제의 차이점은 sayHello() 매서도를 호출한 객체가 달라졌다는 부분이다. 다시 말해, 첫 번째 예제에서 sayHello()를 호출한 객체는 tiger 객체이기 때문에 this 키워드가 가리키는 객체는 tiger 객체가 되는 것이고, 두 번째 예제에서 sayHello()를 호출한 객체가 Animal.prototype 객체이기 때문에 this가 가리키는 녀석이 바로 Animal.prototype이 되는 것이다.</p>
+<blockquote>
+<p>정리해서, <strong>객체의 속성(프로퍼티)가 매소드일 경우 이를 호출한 this는 호출한 객체에 바인딩된다</strong> 가 결론이다.</p>
+</blockquote>
+<h2 id="디플트-프로토타입-링크"><a href="#디플트-프로토타입-링크" class="headerlink" title="디플트 프로토타입 링크"></a>디플트 프로토타입 링크</h2><p>함수를 작성하면 기본적으로 디폴트 프로토타입 영역이 생성이 된다. 이 디폴트 프로토타입 영역은 constructor 라는 속성을 가지는데 constructor 단어 그 자체의 의미처럼 작성한 함수 객체를 참조하는 프로퍼티이다. 그런데 재밌는 부분은 이 디폴트 프로토타입 객체는 개발자에 의해서 변경이 가능하다는 점이다. 그렇기 때문에 프로토타입 객체의 참조 관계를 임의로 개발자가 변경하여 사용하는 것이 가능하다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Weapon</span>(<span class="params">name</span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> machineGun = <span class="keyword">new</span> Weapon(<span class="string">'머신건'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 1번 문제</span></div><div class="line">machineGun.__proto__.constructor === Weapon.prototype.constructor</div><div class="line"></div><div class="line">Weapon.prototype = &#123;</div><div class="line">    <span class="attr">sayWeaponName</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> newGun = <span class="keyword">new</span> Weapon(<span class="string">'뉴건'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 2번 문제</span></div><div class="line">machineGun.__proto__ === newGun.__proto__</div></pre></td></tr></table></figure>
+<p>첫 번째 문제의 경우, Weapon 생성자 함수의 인스턴스인 machineGun의 프로토타입 링크는 Weapon 생성자 함수 객체의 프로토타입 영역을 가리키고 있기 때문에 두 객체의 constructor 는 동일한 녀석인 Weapon 생성자 함수를 가리키게 된다.</p>
+<p>두 번째 문제의 경우, machineGun의 프로토타입 링크가 끊어지지 않은 상태에서 Weapon 함수 객체의 프로토타입 영역을 다른 객체로 대체했다. 이렇게 되면 기존 machineGun의 프로토타입 링크는 그대로 유지되는 반면에 새롭게 생성되는 newGun 객체의 프로토타입 링크는 새롭게 정의된 프로토타입 객체를 바라보게 되면서 2번 문제의 경우 다른 객체를 바라보게 됨에 따라 “false”인 결과가 나오게 된다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=7400243" target="_blank" rel="external">인사이드 자바스크립트</a></li>
+<li><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=6960939" target="_blank" rel="external">자바스크립트 객체지향 프로그래밍</a></li>
+</ul>
+
+        
+            
+        
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">JavaScript</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-Function/"  data-tooltip="자바스크립트 this 바인딩(함수/객체)">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/" data-tooltip="[Node.Js] - Express.Js 기본 개념 및 사용 방법">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 D.Choi. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-Concept-Function/"  data-tooltip="자바스크립트 this 바인딩(함수/객체)">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-expressjs/" data-tooltip="[Node.Js] - Express.Js 기본 개념 및 사용 방법">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/27/JavaScript-Concept-prototype/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+                </div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/developer.png"/>
+        
+            <h4 id="about-card-name">D.Choi</h4>
+        
+            <h5 id="about-card-bio"><p>Do it easy, Do Continue!</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Developer</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/covernew.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'http-thefeeling-github-io';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
