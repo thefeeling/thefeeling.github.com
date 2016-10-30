@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="DevBlog, D.Choi">
+    <title>[ATOM(아톰)] - 설치/플러그인/테마 설정 - DevBlog, D.Choi</title>
+    <meta name="author" content="D.Choi">
+    <meta name="description" content="DevBlog, D.Choi">
+    <link rel="icon" href="/assets/images/null">
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="atom.xml">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="https://thefeeling.github.com">DevBlog, D.Choi</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="/assets/images/developer.png"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="/assets/images/developer.png"/>
+            
+        </a>
+        <span class="sidebar-profile-name">D.Choi</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-categories">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-tags">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/all-archives">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/#about">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="/atom.xml">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">[ATOM(아톰)] - 설치/플러그인/테마 설정</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Fri Oct 28 2016 12:00:00 GMT+0900">
+        Oct 28, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/devtools/">DevTools</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <h3 id="개요"><a href="#개요" class="headerlink" title="개요"></a>개요</h3><p>최근에 마크다운으로 문서 작성하는 것에 재미가 생기다 보니 어플리케이션에서 마크다운 관련된 기능이 충실하게 제공되느냐가 중요하다.<strong><em>자바스크립트,HTML,CSS의 경우 대부분 에디터들이 충실하게 지원하기 때문에 전혀 불편한 부분이 없었다.</em></strong></p>
+<ul>
+<li><a href="https://atom.io" target="_blank" rel="external">ATOM</a></li>
+<li><a href="https://code.visualstudio.com/" target="_blank" rel="external">VScode</a></li>
+<li><a href="https://www.sublimetext.com" target="_blank" rel="external">Sublime Text</a></li>
+</ul>
+<p>윈도우 계열에서 일할 때는 주로 서브라임 텍스트를 서브 에디터로 사용하다보니 자연스럽게 단축키를 익힐 수 있었다. 근데, 맥 환경으로 넘어와서 보니 비슷한 단축키도 많았지만 대부분 키 배열이 달라지는 바람에 버릇처럼 누르던 단축키가 아닌 다른 단축키를 일일이 찾아서 사용해야 초반에는 너무 불편했다. <strong><em>사실 이것 저것 에디터를 바꿔서 사용하다보니 집중하지 못했던 것도 있는거 같다.</em></strong></p>
+<p>결정적으로 마크다운 기능은 모두 지원하고 있지만, 마크다운 성격상 빈번하게 이뤄지는 작업(이미지 업로드, 테이블 생성, HTML 변환 등) 풍부한 기능을 제공하는 플러그인이 존재하는 건 아톰밖에 보이지 않았다(물론 다른 에디터에도 기능 지원이 되는게 있는거 같은데, 일단 내 기준으로는 찾질 못해서 아톰을 다시 서브 텍스트 에디터로 선택!)</p>
+<h3 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h3><p>설치는 쉽다. <a href="https://atom.io" target="_blank" rel="external">ATOM</a> 방문해서 설치 파일 / 실행파일 다운 후 실행하면 된다. 포터블 버젼도 지원하니 설치가 싫은 유저들은 그걸 다운 받아서 진행하면 되겠다.(포터블 만세!)</p>
+<p><img src="http://i.imgur.com/V0JWQoX.png" alt="스크린샷 2016-10-28 오후 1.04.06"></p>
+<p><img src="http://i.imgur.com/LSkVe1R.png" alt="스크린샷 2016-10-28 오후 1.04.18"><br>설치 후 [Preference]를 들어가면 아톰의 기본적인 설정/플러그인 설치,변경 등 필요한 작업을 진행할 수 있다. 기존에 비슷한 서브라임 같은 에디터를 사용해봤다면 크게 어렵지 않게 자신에게 맞는 설정을 진행할 수 있다.</p>
+<h3 id="에디팅-단축키-관련-참고-URL"><a href="#에디팅-단축키-관련-참고-URL" class="headerlink" title="에디팅 단축키 관련 참고 URL"></a>에디팅 단축키 관련 참고 URL</h3><ul>
+<li><a href="https://atom.io/packages/atom-shortcuts" target="_blank" rel="external">atom-shortcuts-packages</a><ul>
+<li><em>누군지는 몰라도 친절하게 패키지로 단축키를 편하게 볼 수 있도록 만들어 주셨다. 고마우신분들이다.</em></li>
+</ul>
+</li>
+<li><a href="https://github.com/nwinkler/atom-keyboard-shortcuts" target="_blank" rel="external">nwinkler-atom-keyboard-shortcuts</a></li>
+<li><a href="http://sweetme.at/2014/03/10/atom-editor-cheat-sheet/" target="_blank" rel="external">sweetme.at-atom_cheat_sheet</a></li>
+</ul>
+<h3 id="설치-플러그인"><a href="#설치-플러그인" class="headerlink" title="설치 플러그인"></a>설치 플러그인</h3><p><a href="https://atom.io/packages/markdown-preview-enhanced" target="_blank" rel="external">markdown-preview-enhanced</a> 플러그인에서 지원해주는 마크다운 관련 기능이 풍부한게 너무 좋았다. 번거롭게 이미지 업로드하는 부분도 클라우드에 올려주고 테이블 생성이나 마크다운 토글지원도 그렇고 마크다운 관련 플러그인 중에서는 가장 짱짱맨인거 같다.</p>
+<table>
+<thead>
+<tr>
+<th>plugins</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://atom.io/packages/docblockr" target="_blank" rel="external">docblockr</a></td>
+<td>주석 생성을 편하게 해준다.</td>
+</tr>
+<tr>
+<td><a href="https://atom.io/packages/emmet" target="_blank" rel="external">emmet</a></td>
+<td>태그 생성 / 탭키 활용하여 쉽게 태그를 생성할 수 있다.</td>
+</tr>
+<tr>
+<td><a href="https://atom.io/packages/file-icons" target="_blank" rel="external">file-icons</a></td>
+<td>사이드바 파일들의 아이콘 표시(JS,CSS,GRUNT,NPM 등)</td>
+</tr>
+<tr>
+<td><a href="https://atom.io/packages/markdown-preview-enhanced" target="_blank" rel="external">markdown-preview-enhanced</a></td>
+<td>마크다운 관련 추가 기능 제공(이미지/테이블/링크 등)</td>
+</tr>
+<tr>
+<td><a href="https://atom.io/packages/minimap" target="_blank" rel="external">minimap</a></td>
+<td>에디팅 오른편에 미니맵 제공</td>
+</tr>
+<tr>
+<td><a href="https://atom.io/packages/minimap-highlight-selected" target="_blank" rel="external">minimap-highlight-selected</a></td>
+<td>미니맵 하이라이팅 제공</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>작업하다가 이것저것 설치해보고, 좋은거는 추가로 올려놓을께요 :)</p>
+</blockquote>
+<h3 id="테마"><a href="#테마" class="headerlink" title="테마"></a>테마</h3><p>테마는 크게 UI Theme / Syntax Theme 로 나뉜다. UI 테마만 변경했고, 그 중에서 가장 세련미가 넘치는(?) Seti-Ui 를 선택했다.</p>
+<ul>
+<li><a href="https://atom.io/themes/seti-ui" target="_blank" rel="external">seti-ui</a></li>
+</ul>
+
+        
+            
+        
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/atom/">Atom</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/28/JavaScript-ES6-es6-arrowfunction-strongobj/"  data-tooltip="[ES6] - Arrow Function(화살표 함수) / 강화된 객체 리터럴 문법">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-pm2/" data-tooltip="[Node.Js] - PM2">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 D.Choi. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/28/JavaScript-ES6-es6-arrowfunction-strongobj/"  data-tooltip="[ES6] - Arrow Function(화살표 함수) / 강화된 객체 리터럴 문법">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/10/27/JavaScript-NodeJS-nodejs-pm2/" data-tooltip="[Node.Js] - PM2">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://thefeeling.github.com/2016/10/28/DevTool-atom-install-plugins-theme/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+
+                </div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/developer.png"/>
+        
+            <h4 id="about-card-name">D.Choi</h4>
+        
+            <h5 id="about-card-bio"><p>Java, JavaScript ETC…</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Developer</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/covernew.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'http-thefeeling-github-io';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
